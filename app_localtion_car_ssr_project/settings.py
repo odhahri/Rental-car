@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'cars.apps.CarsConfig',
     'reservation.apps.ReservationConfig',
     'client.apps.ClientConfig',
+    'agent.apps.AgentConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',

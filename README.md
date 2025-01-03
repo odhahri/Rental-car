@@ -67,5 +67,14 @@ Make sure you have the following installed on your system:
   conda deactivate
   ```
 
+- **facing issues with migrations:**
+  the makefile containes some automatisation command to clean and prepare the project. 
+  if facing any problem related to migration files or cache. Please try to recreate the database, then run make command.
+  ```sh
+  make clean-migrations 
+  ```
+  this insures that you project cleaned. you can then retry migrations and all should be ok.
+
+
 
 

@@ -3,28 +3,20 @@ from reservation.models import Reservation
 
 class ReservationUpdateSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(max_length=50,  required=False)
-    color = serializers.CharField(max_length=50, required=False)
-    year = serializers.CharField(max_length=50,  required=False)
-    image = serializers.CharField(max_length=50, required=False)
-    price = serializers.CharField(max_length=50, required=False)
-    image = serializers.CharField(max_length=50, required=False)
-
-
+    client = serializers.IntegerField(required=True)
+    car = serializers.IntegerField(required=True)
+    status = serializers.CharField(max_length=50, required=False)
+    processedby = serializers.CharField(max_length=50, required=False)
 
     class Meta:
         model = Reservation
-        fields = ['name', 'color', 'year', 'price', 'image']  
+        fields = ['client', 'car', 'status', 'processedby']  
 
     def update(self, instance, validated_data):
-        instance.name = validated_data.get('name', instance.name)
-        instance.color = validated_data.get('color', instance.color)
-        instance.year = validated_data.get('year', instance.year)
-        instance.price = validated_data.get('price', instance.price)
-        instance.image = validated_data.get('image', instance.image)
-
-
-
+        instance.client = validated_data.get('client', instance.client)
+        instance.car = validated_data.get('car', instance.car)
+        instance.status = validated_data.get('status', instance.status)
+        instance.processedby = validated_data.get('processedby', instance.processedby)
 
         instance.save()
         return instance

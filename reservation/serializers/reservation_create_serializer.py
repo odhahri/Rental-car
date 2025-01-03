@@ -2,19 +2,18 @@ from rest_framework import serializers
 from reservation.models import Reservation
 
 class ReservationCreateInputSerializer(serializers.ModelSerializer):
-
+    client = serializers.IntegerField(required=True)
+    car = serializers.IntegerField(required=True)
+    
     class Meta:
         model = Reservation
-        fields = '__all__'
+        fields = ['client', 'car']
 
-    # def create(self, validated_data: dict):
-    #     return Car.objects.create(
-    #         name=validated_data.get('name'),
-    #         color=validated_data.get('color'),
-    #         year=validated_data.get('year'),
-    #         price=validated_data.get('price'),
-    #         image=validated_data.get('image')
-    #     )
+    def create(self, validated_data: dict):
+        return Reservation.objects.create(
+            client=validated_data.get('client'),
+            car=validated_data.get('car'),
+        )
 
 class ReservationCreateOutputSerializer(serializers.ModelSerializer):
     class Meta:

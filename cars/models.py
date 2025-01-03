@@ -4,12 +4,12 @@ from app_localtion_car_ssr_project.shared.models.modelWrapper import ModelWrappe
 
 class Car(ModelWrapper):
     car_id = models.AutoField(primary_key=True)
-    brand = models.CharField(max_length=200, null=True, blank=True)
+    brand = models.CharField(max_length=200, null=False, blank=False)
     model = models.CharField(max_length=100)
     color = models.CharField(max_length=100)
-    year = models.IntegerField(null=True, blank=True)
-    rentalprice = models.IntegerField(null=True, blank=True)
-    image = models.CharField(max_length=500, null=True, blank=True)
+    year = models.IntegerField(null=False, blank=False)
+    rentalprice = models.IntegerField(null=False, blank=False)
+    image = models.CharField(max_length=500, null=False, blank=False)
     
     def __str__(self):
         return self.model

@@ -6,7 +6,7 @@ from reservation.services.reservation_service import ReservationService
 
 from .models import Reservation
 
-class CarViewSet(GenericViewSet):
+class ReservationViewSet(GenericViewSet):
 
     queryset = Reservation.objects.all()
     reservation_service = ReservationService()
@@ -19,7 +19,7 @@ class CarViewSet(GenericViewSet):
         reservation = self.reservation_service.create(request)
         return Response(data=reservation, status=201)
     
-    def list_reservation(self, request):
+    def list_reservations(self, request):
         reservations = self.reservation_service.list()
         return Response(data=reservations, status=200)
     

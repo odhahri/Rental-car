@@ -7,7 +7,7 @@ from django.shortcuts import render
 
 from .models import agent
 
-class agentViewSet(GenericViewSet):
+class AgentViewSet(GenericViewSet):
 
     queryset = agent.objects.all()
     agent_service = AgentService()
@@ -41,13 +41,4 @@ class agentViewSet(GenericViewSet):
         agent = self.agent_service.get_by_name(name)
         return Response(data=agent, status=200)
     
-
-     # HTML-based Views
-    def agent_list_page(self, request):
-        agents = self.agent_service.list()
-        return render(request, 'agents/agent_list.html', {'agents': agents})
-
-    def agent_detail_page(self, request, pk):
-        agent = self.agent_service.get(pk)
-        return render(request, 'agents/agent_detail.html', {'agent': agent})
 

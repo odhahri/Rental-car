@@ -34,8 +34,11 @@ class CarViewSet(GenericViewSet):
     
 
     def delete_car(self, request, pk):
-        self.car_service.delete(pk)
-        return Response(status=204)
+        try:
+            self.car_service.delete(pk)
+            return Response(data='Car deleted successfully', status=200)
+        except Car.DoesNotExist:
+            return Response(data ='Car does not exists', status=204)
     
     def get_car_by_name(self, request, name):
         car = self.car_service.get_by_name(name)

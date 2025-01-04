@@ -5,11 +5,11 @@ from django.shortcuts import render
 
 # rest framework django view 
 
-from .models import agent
+from .models import Agent
 
 class AgentViewSet(GenericViewSet):
 
-    queryset = agent.objects.all()
+    queryset = Agent.objects.all()
     agent_service = AgentService()
 
     def __init__(self, **kwargs):

@@ -25,16 +25,15 @@ class CarService():
     
     def update(self,request,pk):
         car = Car.objects.get(pk=pk)
-        serializer = CarCreateInputSerializer(instance=car,data=request.data)
+        serializer = CarUpdateSerializer(instance = car, data=request.data)
         serializer.is_valid(raise_exception=True)
-        car = serializer.save()
-        outputserializer = CarUpdateSerializer(car)
-        # outputserializer.is_valid(raise_exception=True)
-        return outputserializer.data
+        serializer.save()
+        return serializer.validated_data
+
     
     def delete(self,pk):
-        car = Car.objects.get(pk=pk)
-        car.delete()
+            car = Car.objects.get(pk=pk)
+            car.delete()
 
     def get_by_name(self,name):
         car = Car.objects.get(name=name)

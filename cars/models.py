@@ -3,13 +3,14 @@ from django.db import models
 from app_localtion_car_ssr_project.shared.models.modelWrapper import ModelWrapper
 
 class Car(ModelWrapper):
+    name = models.CharField(max_length=200, null=False)
     car_id = models.AutoField(primary_key=True)
     brand = models.CharField(max_length=200, null=False, blank=False)
     model = models.CharField(max_length=100)
     color = models.CharField(max_length=100)
     year = models.IntegerField(null=False, blank=False)
     rentalprice = models.IntegerField(null=False, blank=False)
-    image = models.CharField(max_length=500, null=False, blank=False)
+    image = models.CharField(max_length=500, null=True, blank=True)
     
     def __str__(self):
         return self.model

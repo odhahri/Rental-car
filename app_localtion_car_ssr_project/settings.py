@@ -60,7 +60,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [os.path.join(BASE_DIR, 'templates')],
+        'DIRS': [
+            os.path.join(BASE_DIR, 'cars/templates'),  # Add this if templates are specific to the app
+            os.path.join(BASE_DIR, 'templates')  # Add a common templates directory
+            ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

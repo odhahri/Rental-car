@@ -1,0 +1,102 @@
+{% block content %}
+<div class="table-container">
+    <!-- Table Header Section with Search and Actions -->
+    <div class="table-header">
+        <div class="header-left">
+            <h2 class="section-title">{{ table_title }}</h2>
+            <span class="item-count">{{ items|length }} items</span>
+        </div>
+        <div class="header-right">
+            <div class="search-box">
+                <i class="bi bi-search"></i>
+                <input type="text" id="tableSearch" placeholder="Search..." onkeyup="filterTable()">
+            </div>
+            {% if show_add_button %}
+            <button class="btn btn-primary" onclick="location.href='{{ add_url }}'">
+                <i class="bi bi-plus-lg"></i> Add New
+            </button>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Table Wrapper -->
+    <div class="table-responsive">
+        <table class="table" id="dataTable">
+            <thead>
+                <tr>
+                    {% for column in columns %}
+                    <th onclick="sortTable({{ forloop.counter0 }})" class="sortable">
+                        {{ column.label }}
+                        <i class="bi bi-arrow-down-up sort-icon"></i>
+                    </th>
+                    {% endfor %}
+                    {% if show_actions %}
+                    <th class="actions-column">Actions</th>
+                    {% endif %}
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    {% for column in columns %}
+                    <td>
+                        {{ item.resolved_values[column.key]|default:"-" }}
+                    </td>
+                    {% endfor %}
+                    {% if show_actions %}
+                    <td class="actions-cell">
+                        <div class="action-buttons">
+                            <button class="btn btn-icon btn-view" onclick="location.href='{% url view_url item.id %}'">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            <button class="btn btn-icon btn-edit" onclick="location.href='{% url edit_url item.id %}'">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-icon btn-delete" onclick="confirmDelete('{{ item.id }}')">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                    {% endif %}
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="{{ columns|length|add:1 }}" class="empty-state">
+                        <div class="empty-state-content">
+                            <i class="bi bi-inbox"></i>
+                            <p>No items found</p>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Pagination -->
+    {% if items.has_other_pages %}
+    <div class="pagination-container">
+        <div class="pagination">
+            {% if items.has_previous %}
+            <a href="?page={{ items.previous_page_number }}" class="btn btn-icon">
+                <i class="bi bi-chevron-left"></i>
+            </a>
+            {% endif %}
+
+            {% for num in items.paginator.page_range %}
+            {% if num == items.number %}
+            <span class="btn btn-icon active">{{ num }}</span>
+            {% else %}
+            <a href="?page={{ num }}" class="btn btn-icon">{{ num }}</a>
+            {% endif %}
+            {% endfor %}
+
+            {% if items.has_next %}
+            <a href="?page={{ items.next_page_number }}" class="btn btn-icon">
+                <i class="bi bi-chevron-right"></i>
+            </a>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+</div>

@@ -1,18 +1,257 @@
-<!DOCTYPE html>
-<html lang="en">
+{% extends 'cars/shared/base_template.html' %}
+{% block title %}{{ car.name }} Details{% endblock %}
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Car Details</title>
-</head>
+{% block styles %}
+<style>
+    /* Page Container */
+    .car-details-container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
 
-<body>
-    <h1>Car Details</h1>
-    <p><strong>Name:</strong> {{ car.name }}</p>
-    <p><strong>Model:</strong> {{ car.model }}</p>
-    <p><strong>Year:</strong> {{ car.year }}</p>
-    <a href="{% url 'car_list_page' %}">Back to Car List</a>
-</body>
+    /* Carousel Styling */
+    .carousel-container {
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        padding: 1rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
 
-</html>
+    .carousel-inner img {
+        height: 400px;
+        object-fit: cover;
+        border-radius: calc(var(--border-radius) - 0.5rem);
+        cursor: zoom-in;
+    }
+
+    /* Car Information Section */
+    .car-info-section {
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .car-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 1rem;
+    }
+
+    .car-subtitle {
+        font-size: 1.25rem;
+        color: var(--text-secondary);
+        margin-bottom: 2rem;
+    }
+
+    .car-description {
+        color: var(--text-primary);
+        line-height: 1.7;
+        margin-bottom: 2rem;
+    }
+
+    /* Attributes Grid */
+    .attributes-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .attribute-item {
+        background: var(--background-color);
+        padding: 1rem;
+        border-radius: 0.5rem;
+    }
+
+    .attribute-label {
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .attribute-value {
+        color: var(--text-primary);
+        font-weight: 600;
+        font-size: 1.1rem;
+    }
+
+    /* Availability Badge */
+    .availability-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+    }
+
+    .available {
+        background-color: rgba(16, 185, 129, 0.1);
+        color: var(--success-color);
+    }
+
+    .unavailable {
+        background-color: rgba(239, 68, 68, 0.1);
+        color: var(--danger-color);
+    }
+
+    /* Buttons */
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-block;
+    }
+
+    .btn-primary {
+        background-color: var(--primary-color);
+        color: white;
+        border: none;
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    .btn-secondary {
+        background-color: var(--background-color);
+        color: var(--text-primary);
+        margin-right: 1rem;
+    }
+
+    .btn-secondary:hover {
+        background-color: #e2e8f0;
+    }
+
+    /* Modal for Image Zoom */
+    .zoom-modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.9);
+        z-index: 1000;
+    }
+
+    .zoom-modal img {
+        max-width: 90%;
+        max-height: 90vh;
+        margin: auto;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .car-title {
+            font-size: 2rem;
+        }
+
+        .carousel-inner img {
+            height: 300px;
+        }
+
+        .car-details-container {
+            padding: 1rem;
+        }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="car-details-container">
+    <!-- Image Carousel -->
+    <div class="carousel-container">
+        <div id="carImageCarousel" class="carousel slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                {% for image in car.images %}
+                <div class="carousel-item {% if forloop.first %}active{% endif %}">
+                    <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                        class="d-block w-100" alt="{{ car.name }}" onclick="openZoomModal(this.src)">
+                </div>
+                {% endfor %}
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carImageCarousel" data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Car Information -->
+    <div class="car-info-section">
+        <h1 class="car-title">{{ car.name }}</h1>
+        <p class="car-subtitle">{{ car.model }} | {{ car.year }}</p>
+
+        <!-- Availability Badge -->
+        <div class="availability-badge {% if car.is_available %}available{% else %}unavailable{% endif %}">
+            {% if car.is_available %}
+            Available for Reservation
+            {% else %}
+            Currently Unavailable
+            {% endif %}
+        </div>
+
+        <!-- Car Description -->
+        <p class="car-description">{{ car.description }}</p>
+
+        <!-- Car Attributes -->
+        <div class="attributes-grid">
+            <div class="attribute-item">
+                <div class="attribute-label">Make</div>
+                <div class="attribute-value">{{ car.name }}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-label">Model</div>
+                <div class="attribute-value">{{ car.model }}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-label">Year</div>
+                <div class="attribute-value">{{ car.year }}</div>
+            </div>
+            <!-- Add more attributes as needed -->
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{% url 'car_list_page' %}" class="btn btn-secondary">Back to Car List</a>
+            {% if car.is_available %}
+            <a href="#" class="btn btn-primary">Reserve Now</a>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<!-- Zoom Modal -->
+<div id="imageZoomModal" class="zoom-modal" onclick="closeZoomModal()">
+    <img id="zoomedImage" src="" alt="Zoomed car image">
+</div>
+
+<script>
+    function openZoomModal(imgSrc) {
+        const modal = document.getElementById('imageZoomModal');
+        const zoomedImg = document.getElementById('zoomedImage');
+        modal.style.display = 'block';
+        zoomedImg.src = imgSrc;
+    }
+
+    function closeZoomModal() {
+        document.getElementById('imageZoomModal').style.display = 'none';
+    }
+</script>
+{% endblock %}

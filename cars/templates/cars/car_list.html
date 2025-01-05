@@ -1,16 +1,138 @@
 {% extends 'cars/shared/base_template.html' %}
-{% block title %}List of cars{% endblock %}
+{% block title %}List of Cars{% endblock %}
 
 {% block styles %}
+<style>
+    /* Page Title Styling */
+    .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--text-primary);
+        margin-bottom: 2rem;
+        position: relative;
+        padding-bottom: 1rem;
+    }
+
+    .page-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: var(--primary-color);
+        border-radius: 2px;
+    }
+
+    /* Card Styling */
+    .car-card {
+        margin-bottom: 2rem;
+    }
+
+    .car-card .card {
+        border: none;
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        transition: var(--transition);
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
+
+    .car-card .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+    }
+
+    .car-card img {
+        height: 200px;
+        object-fit: cover;
+        width: 100%;
+    }
+
+    .car-card .card-body {
+        padding: 1.5rem;
+    }
+
+    .car-card .card-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin-bottom: 0.5rem;
+    }
+
+    .car-card .card-text {
+        color: var(--text-secondary);
+        font-size: 0.975rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Button Styling */
+    .btn-primary {
+        background-color: var(--primary-color);
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        transition: var(--transition);
+    }
+
+    .btn-primary:hover {
+        background-color: var(--primary-hover);
+        transform: translateY(-2px);
+    }
+
+    /* Empty State Styling */
+    .empty-state {
+        padding: 4rem 2rem;
+        background: var(--card-background);
+        border-radius: var(--border-radius);
+        text-align: center;
+    }
+
+    .empty-state p {
+        color: var(--text-secondary);
+        font-size: 1.1rem;
+    }
+
+    /* Responsive Grid */
+    @media (max-width: 768px) {
+        .page-title {
+            font-size: 2rem;
+        }
+
+        .car-card {
+            padding: 0 0.5rem;
+        }
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<h1>List of Cars</h1>
-<ul class="list-group">
-    {% for car in cars %}
-    <li class="list-group-item">
-        <a href="{% url 'car_detail_page' car.car_id %}">{{ car.name }}</a> - {{ car.model }}
-    </li>
-    {% endfor %}
-</ul>
+<div class="container mt-5">
+    <h1 class="page-title text-center">Explore Our Car Collection</h1>
+    <div class="row g-4">
+        {% for car in cars %}
+        <div class="col-md-6 col-lg-4 car-card">
+            <div class="card">
+                <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                    alt="{{ car.name }}" class="card-img-top">
+                <div class="card-body">
+                    <h5 class="card-title">{{ car.name }}</h5>
+                    <p class="card-text">{{ car.model }}</p>
+                    <a href="{% url 'car_detail_page' car.car_id %}" class="btn btn-primary w-100">
+                        View Details
+                    </a>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="col-12">
+            <div class="empty-state">
+                <p>No cars available at the moment. Check back later!</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
 {% endblock %}

@@ -120,7 +120,7 @@
                 <div class="card-body">
                     <h5 class="card-title">{{ car.name }}</h5>
                     <p class="card-text">{{ car.model }}</p>
-                    <a href="{% url 'car_detail_page' car.car_id %}" class="btn btn-primary w-100">
+                    <a href="{% url 'cars:car_detail_page' car.car_id %}" class="btn btn-primary w-100">
                         View Details
                     </a>
                 </div>

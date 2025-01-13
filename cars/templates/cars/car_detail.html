@@ -229,7 +229,7 @@
 
         <!-- Action Buttons -->
         <div class="action-buttons">
-            <a href="{% url 'car_list_page' %}" class="btn btn-secondary">Back to Car List</a>
+            <a href="{% url 'cars:car_list_page' %}" class="btn btn-secondary">Back to Car List</a>
             {% if car.is_available %}
             <a href="#" class="btn btn-primary">Reserve Now</a>
             {% endif %}

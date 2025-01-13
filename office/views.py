@@ -6,6 +6,7 @@ from rest_framework.viewsets import GenericViewSet
 
 from cars.serializers.car_view_serializer import CarSerializer
 from cars.services.car_service import CarService
+import json
 
 class OfficeViewSet(GenericViewSet):
     car_service = CarService()
@@ -24,14 +25,18 @@ class OfficeViewSet(GenericViewSet):
         context = {
             'table_title': 'Cars Management',
             'columns': columns,  # Add your car fields
-            'items': cars_list,  # Add your cars queryset
+            'items': cars_list,
+            
+            # Add your cars queryset
             'show_actions': True,
             'show_add_button': True,
-            'add_url': 'add_car',  # URL name for adding a car
-            'view_url': 'car_detail',  # URL name for viewing a car
-            'edit_url': 'edit_car',  # URL name for editing a car
+            'add_url': 'cars:add_car',  # URL name for adding a car
+            'edit_url': 'cars:update_car', 
+            'delete_url' : 'cars:delete_car'  # URL name for editing a car
         }
-        print('carss columns is :',context['items']) 
+        print('those are columns',context.get('columns'))
+        print('those are items',context.get('items'))
+        
         return render(request, 'cars.html', context)
 
     def show_office_agents_page(self, request):

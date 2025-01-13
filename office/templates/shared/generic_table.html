@@ -45,13 +45,13 @@
                     {% if show_actions %}
                     <td class="actions-cell">
                         <div class="action-buttons">
-                            <button class="btn btn-icon btn-view">
+                            <button class="btn btn-icon btn-view" onclick="viewDetails('{{ item|dict_to_json }}')">
                                 <i class="bi bi-eye"></i>
                             </button>
-                            <button class="btn btn-icon btn-edit">
+                            <button class="btn btn-icon btn-edit" onclick="editDetails('{{ item|dict_to_json }}')">
                                 <i class="bi bi-pencil"></i>
                             </button>
-                            <button class="btn btn-icon btn-delete" onclick="confirmDelete('{{ item.car_id }}')">
+                            <button class="btn btn-icon btn-delete" onclick="confirmDelete('{{ item|dict_to_json }}')">
                                 <i class="bi bi-trash"></i>
                             </button>
                         </div>
@@ -118,6 +118,48 @@
         </div>
     </div>
 </div>
+
+<!-- view details Modal -->
+<div class="modal fade" id="viewModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Consult element</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                in progress ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- edit details Modal -->
+<div class="modal fade" id="editModal" tabindex="-1">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Edit Car</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Content populated dynamically -->
+                <form id="editForm">
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- Buttons populated dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
 
 <style>
     /* Table Container */
@@ -367,17 +409,114 @@
         rows.forEach(row => tbody.appendChild(row));
     }
 
+    // Api urls that will be used with AJAX requests to delete and update the data, for view no need. because data is returned by the current app view functions
+
+
+
     let itemToDelete = null;
 
-    function confirmDelete(id) {
-        itemToDelete = id;
+    function confirmDelete(item) {
+        data = JSON.parse(item);
+        itemToDelete = data['id'];
         const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
         modal.show();
     }
 
+    function viewDetails(item) {
+        const data = JSON.parse(item);
+        let content = ''; // This will hold the HTML content.
+
+        // Loop through the data object.
+        for (const key in data) {
+            content += `
+            <p><strong>${key}:</strong> ${data[key]}</p>
+        `;
+        }
+
+        // After the loop, set the innerHTML all at once.
+        document.querySelector('#viewModal .modal-body').innerHTML = content;
+
+        const modal = new bootstrap.Modal(document.getElementById('viewModal'));
+        modal.show();
+    }
+
+
+    function editDetails(item) {
+        const data = JSON.parse(item);
+        let content = ''; // This will hold the HTML content.
+        // Loop through the data object.
+        for (const key in data) {
+            if (key === 'id') {
+                content += `
+        <div class="mb-3 d-flex align-items-center">
+            <input type="text" class="form-control w-50" id="edit:${key}" value="${data[key]}" hidden disabled>
+        </div>
+    `;
+            } else {
+                content += `
+        <div class="mb-3 d-flex align-items-center">
+            <label for="edit:${key}" class="form-label me-2 w-25 text-start">${key}</label>
+            <input type="text" class="form-control w-50" id="edit:${key}" value="${data[key]}">
+        </div>
+    `;
+            }
+        }
+
+
+        document.querySelector('#editModal .modal-body #editForm').innerHTML = content;
+        document.querySelector('#editModal .modal-footer').innerHTML = `
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveEdit('${data['id']}')">Save</button>
+    `;
+        const modal = new bootstrap.Modal(document.getElementById('editModal'));
+        modal.show();
+    }
+
+    function saveEdit(id) {
+        const updatedData = {}; // This will hold the updated form data.
+
+        // Loop through each field and get the updated value.
+        const form = document.querySelector('#editModal .modal-body');
+        const inputs = form.querySelectorAll('input');
+
+        inputs.forEach(input => {
+            const key = input.id.split(':')[1]; // Extract the key from the input ID (e.g., "edit:name" -> "name").
+            updatedData[key] = input.value; // Store the updated value in the updatedData object.
+        });
+
+        // Optional validation or confirmation check
+        if (!id || id !== updatedData['id']) {
+            console.error('Invalid ID or ID mismatch.');
+            return;
+        }
+
+        console.log(updatedData); // For demonstration purposes, log the updated data.
+
+        // Construct the AJAX call to save the changes
+        const url = `{% url edit_url 0 %}`.replace(0, id);
+
+        $.ajax({
+            url: url,
+            type: 'PUT',
+            contentType: 'application/json', // Ensure the data is sent as JSON
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                // alert(response);
+                // Reload or update the UI as needed
+                location.reload();
+            },
+            error: function (xhr) {
+                console.error('Failed to update item:', xhr.responseText || xhr);
+                alert('Failed to save changes. Please try again.');
+            }
+        });
+    }
+
+
+
     function deleteItem() {
         itemId = itemToDelete;
-        const url = `{% url 'cars:delete_car' 0 %}`.replace(0, itemId);
+        const url = `{% url delete_url 0 %}`.replace(0, itemId);
 
         $.ajax({
             url: url,

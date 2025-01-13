@@ -30,7 +30,7 @@ class CarViewSet(GenericViewSet):
     
     def update_car(self, request, pk):
         car = self.car_service.update(request, pk)
-        return Response(data=car, status=200)
+        return Response(data='car updated successfully', status=200)
     
 
     def delete_car(self, request, pk):

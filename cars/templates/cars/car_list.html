@@ -118,9 +118,9 @@
                 <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
                     alt="{{ car.name }}" class="card-img-top">
                 <div class="card-body">
-                    <h5 class="card-title">{{ car.name }}</h5>
-                    <p class="card-text">{{ car.model }}</p>
-                    <a href="{% url 'cars:car_detail_page' car.car_id %}" class="btn btn-primary w-100">
+                    <h5 class="card-title">{{ car.car_name }}</h5>
+                    <p class="card-text">{{ car.model_name }}</p>
+                    <a href="{% url 'cars:car_detail_page' car.id %}" class="btn btn-primary w-100">
                         View Details
                     </a>
                 </div>

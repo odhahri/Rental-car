@@ -13,12 +13,12 @@ class AgentService():
     
     
     def list(self):
-        agent = agent.objects.all()
+        agent = Agent.objects.all()
         serializer = AgentSerializer(agent, many=True)
         return serializer.data
     
     def get(self,pk):
-        agent = agent.objects.get(pk=pk)
+        agent = Agent.objects.get(pk=pk)
         serializer = AgentSerializer(agent)
         # serializer.is_valid(raise_exception=True)
         return serializer.data
@@ -33,11 +33,11 @@ class AgentService():
         return outputserializer.data
     
     def delete(self,pk):
-        agent = agent.objects.get(pk=pk)
+        agent = Agent.objects.get(pk=pk)
         agent.delete()
 
     def get_by_name(self,name):
-        agent = agent.objects.get(name=name)
+        agent = Agent.objects.get(name=name)
         serializer = AgentSerializer(agent)
         return serializer.validated_data
     

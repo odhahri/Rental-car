@@ -178,7 +178,7 @@
                 {% for image in car.images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
                     <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                        class="d-block w-100" alt="{{ car.name }}" onclick="openZoomModal(this.src)">
+                        class="d-block w-100" alt="{{ car.car_name }}" onclick="openZoomModal(this.src)">
                 </div>
                 {% endfor %}
             </div>
@@ -195,8 +195,8 @@
 
     <!-- Car Information -->
     <div class="car-info-section">
-        <h1 class="car-title">{{ car.name }}</h1>
-        <p class="car-subtitle">{{ car.model }} | {{ car.year }}</p>
+        <h1 class="car-title">{{ car.car_name }}</h1>
+        <p class="car-subtitle">{{ car.model_name }} | {{ car.year }}</p>
 
         <!-- Availability Badge -->
         <div class="availability-badge {% if car.is_available %}available{% else %}unavailable{% endif %}">
@@ -208,21 +208,21 @@
         </div>
 
         <!-- Car Description -->
-        <p class="car-description">{{ car.description }}</p>
+        <p class="car-description">{{ car.car_color }}</p>
 
         <!-- Car Attributes -->
         <div class="attributes-grid">
             <div class="attribute-item">
                 <div class="attribute-label">Make</div>
-                <div class="attribute-value">{{ car.name }}</div>
+                <div class="attribute-value">{{ car.car_name }}</div>
             </div>
             <div class="attribute-item">
                 <div class="attribute-label">Model</div>
-                <div class="attribute-value">{{ car.model }}</div>
+                <div class="attribute-value">{{ car.model_name }}</div>
             </div>
             <div class="attribute-item">
                 <div class="attribute-label">Year</div>
-                <div class="attribute-value">{{ car.year }}</div>
+                <div class="attribute-value">{{ car.manufacture_year }}</div>
             </div>
             <!-- Add more attributes as needed -->
         </div>

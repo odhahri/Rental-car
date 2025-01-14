@@ -16,8 +16,7 @@ class ReservationService():
     def list(self):
         reservations = Reservation.objects.all()
         serializer = ReservationSerializer(reservations, many=True)
-        serializer.is_valid(raise_exception=True)
-        return serializer.validated_data
+        return serializer.data
     
     def get(self,pk):
         reservation = Reservation.objects.get(pk=pk)

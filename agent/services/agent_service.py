@@ -6,6 +6,7 @@ from agent.serializers.agent_view_serializer import AgentSerializer
 class AgentService():
     def create(self, request):
         serializer = AgentCreateInputSerializer(data=request.data)
+        print('those are agent data',request.data)
         serializer.is_valid(raise_exception=True)
         agent = serializer.save()
         output_serializer = AgentCreateOutputSerializer(agent)

@@ -2,7 +2,7 @@ from django.urls import path
 from cars.views import CarViewSet
 app_name = 'cars'
 urlpatterns = [
-    path('create/', CarViewSet.as_view({'post': 'create_car'})),
+    path('create/', CarViewSet.as_view({'post': 'create_car'}),name='add_car'),
     path('list/', CarViewSet.as_view({'get': 'list_cars'})),
     path('get/<int:pk>/', CarViewSet.as_view({'get': 'get_car'})),
     path('update/<int:pk>/', CarViewSet.as_view({'put': 'update_car'}),name='update_car'),

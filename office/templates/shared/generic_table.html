@@ -13,7 +13,7 @@
                 <input type="text" id="tableSearch" placeholder="Search..." onkeyup="filterTable()">
             </div>
             {% if show_add_button %}
-            <button class="btn btn-primary" onclick="location.href='{{ add_url }}'">
+            <button class="btn btn-primary" onclick="openAddModal('{{ columns|dict_to_json }}')">
                 <i class="bi bi-plus-lg"></i> Add New
             </button>
             {% endif %}
@@ -149,6 +149,28 @@
             <div class="modal-body">
                 <!-- Content populated dynamically -->
                 <form id="editForm">
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <!-- Buttons populated dynamically -->
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- edit details Modal -->
+<div class="modal fade" id="addModal" tabindex="-1">
+    <div class="modal-dialog ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Add item</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Content populated dynamically -->
+                <form id="addForm">
 
                 </form>
             </div>
@@ -532,6 +554,69 @@
             },
             error: function (xhr) {
 
+            }
+        });
+    }
+    function openAddModal(columns) {
+
+        const data = JSON.parse(columns);
+        console.log(data);
+        let content = ''; // This will hold the HTML content.
+        // Loop through the data object.
+        for (const key in data) {
+            console.log(key);
+
+            if (data[key] === 'id' || data[key].indexOf ('updated_at') !== -1 || data[key].indexOf ('created_at') !== -1) {
+                continue;
+            }
+                content += `
+        <div class="mb-3 d-flex align-items-center">
+            <label for="add:${data[key]}" class="form-label me-2 w-25 text-start">${data[key]}</label>
+            <input type="text" class="form-control w-50" id="add:${data[key]}" value="">
+        </div>
+    `;
+            
+        }
+
+        document.querySelector('#addModal .modal-body #addForm').innerHTML = content;
+        document.querySelector('#addModal .modal-footer').innerHTML = `
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary" onclick="saveNewElement()">Save</button>`
+
+        const modal = new bootstrap.Modal(document.getElementById('addModal'));
+        modal.show();
+    }
+
+    function saveNewElement() {
+        const updatedData = {}; // This will hold the updated form data.
+
+        // Loop through each field and get the updated value.
+        const form = document.querySelector('#addModal .modal-body');
+        const inputs = form.querySelectorAll('input');
+
+        inputs.forEach(input => {
+            const key = input.id.split(':')[1]; // Extract the key from the input ID (e.g., "edit:name" -> "name").
+            updatedData[key] = input.value; // Store the updated value in the updatedData object.
+        });
+
+        console.log(updatedData); // For demonstration purposes, log the updated data.
+
+        // Construct the AJAX call to save the changes
+        const url = `{% url add_url %}`;
+
+        $.ajax({
+            url: url,
+            type: 'POST',
+            contentType: 'application/json', // Ensure the data is sent as JSON
+            data: JSON.stringify(updatedData),
+            success: function (response) {
+                // alert(response);
+                // Reload or update the UI as needed
+                location.reload();
+            },
+            error: function (xhr) {
+                console.error('Failed to update item:', xhr.responseText || xhr);
+                alert('Failed to save changes. Please try again.');
             }
         });
     }

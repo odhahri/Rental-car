@@ -6,7 +6,7 @@ class AgentCreateInputSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Agent
-        fields = ['username', 'fname', 'lname', 'email', 'phone']
+        fields = ['username', 'fname', 'lname', 'email', 'phone', 'image']
         extra_kwargs = {
             'username': {'required': True},
             'fname': {'required': True},
@@ -17,11 +17,13 @@ class AgentCreateInputSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict):
         return Agent.objects.create(
-            name=validated_data.get('name'),
-            color=validated_data.get('color'),
-            year=validated_data.get('year'),
-            price=validated_data.get('price'),
+            username=validated_data.get('username'),
+            fname=validated_data.get('fname'),
+            lname=validated_data.get('lname'),
+            email=validated_data.get('email'),
+            phone=validated_data.get('phone'),
             image=validated_data.get('image')
+
         )
 
 class AgentCreateOutputSerializer(serializers.ModelSerializer):

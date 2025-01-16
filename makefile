@@ -1,5 +1,6 @@
 .PHONY: makemigraterun
-
+# Default target
+default: makemigraterun
 # prepare-all:
 # 	conda create -n rental-car python==3.11 -y
 # 	conda activate rental-car

@@ -3,8 +3,8 @@ from django.db import models
 from app_localtion_car_ssr_project.shared.models.modelWrapper import ModelWrapper
 
 class Car(ModelWrapper):
-    name = models.CharField(max_length=200, null=False)
     car_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=200, null=False)
     brand = models.CharField(max_length=200, null=False, blank=False)
     model = models.CharField(max_length=100)
     color = models.CharField(max_length=100)

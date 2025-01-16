@@ -25,7 +25,7 @@ class CarService():
     
     def update(self,request,pk):
         car = Car.objects.get(pk=pk)
-        serializer = CarUpdateSerializer(instance = car, data=request.data)
+        serializer = CarUpdateSerializer(instance = car, data = request.data)
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return serializer.validated_data

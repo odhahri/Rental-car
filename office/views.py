@@ -8,8 +8,7 @@ from agent.serializers.agent_view_serializer import AgentSerializer
 from agent.services.agent_service import AgentService
 from cars.serializers.car_view_serializer import CarSerializer
 from cars.services.car_service import CarService
-import json
-
+from office.services.office_service import OfficeService
 from client.serializers.client_view_serializer import ClientSerializer
 from client.services.client_service import ClientService
 from reservation.serializers.reservation_view_serializer import ReservationSerializer
@@ -31,7 +30,7 @@ class OfficeViewSet(GenericViewSet):
         cars_list = self.car_service.list()
         serializer = CarSerializer()
         columns = [field for field in serializer.fields]
-
+        column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
         context = {
             'table_title': 'Cars Management',
             'columns': columns,  # Add your car fields
@@ -44,15 +43,14 @@ class OfficeViewSet(GenericViewSet):
             'edit_url': 'cars:update_car', 
             'delete_url' : 'cars:delete_car'  # URL name for editing a car
         }
-        print('those are columns',context.get('columns'))
-        print('those are items',context.get('items'))
-        
+        print('those are html types',column_types)
         return render(request, 'cars.html', context)
-
+    
     def show_office_agents_page(self, request):
         agents_list = self.agent_service.list()
         serializer = AgentSerializer()
         columns = [field for field in serializer.fields]
+        column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
 
         context = {
             'table_title': 'Agents Management',
@@ -66,15 +64,14 @@ class OfficeViewSet(GenericViewSet):
             'edit_url': 'agents:update_agent', 
             'delete_url' : 'agents:delete_agent'  # URL name for editing a car
         }
-        print('those are columns',context.get('columns'))
-        print('those are items',context)
+        print('those are html types',column_types)
         return render(request, 'agents.html', context)
     
     def show_office_reservations_page(self, request):
         reservations_list = self.reservation_service.list()
         serializer = ReservationSerializer()
         columns = [field for field in serializer.fields]
-
+        column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
         context = {
             'table_title': 'Reservation Management',
             'columns': columns,  # Add your car fields
@@ -87,14 +84,14 @@ class OfficeViewSet(GenericViewSet):
             'edit_url': 'reservations:update_reservation', 
             'delete_url' : 'reservations:delete_reservation'  # URL name for editing a car
         }
-        print('those are columns',context.get('columns'))
-        print('those are items',context.get('items'))
+        print('those are html types',column_types)
         return render(request, 'reservations.html', context)
     
     def show_office_clients_page(self, request):
         clients_list = self.client_service.list()
         serializer = ClientSerializer()
         columns = [field for field in serializer.fields]
+        column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
 
         context = {
             'table_title': 'Clients Management',
@@ -108,6 +105,5 @@ class OfficeViewSet(GenericViewSet):
             'edit_url': 'clients:update_client', 
             'delete_url' : 'clients:delete_client'  # URL name for editing a car
         }
-        print('those are columns',context.get('columns'))
-        print('those are items',context.get('items'))
+        print('those are html types',column_types)
         return render(request, 'clients.html', context)

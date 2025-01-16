@@ -2,14 +2,13 @@ from rest_framework import serializers
 from cars.models import Car
 
 class CarCreateInputSerializer(serializers.Serializer):
-    # image = serializers.CharField(max_length=50, required=True, allow_blank=True)
-
-    brand_name = serializers.CharField(max_length=200, required=True)
-    model_name = serializers.CharField(max_length=100, required=True)
-    car_name = serializers.CharField(max_length=100, required=True)
-    car_color = serializers.CharField(max_length=100, required=True)
-    manufacture_year = serializers.IntegerField(required=True)
-    rental_price = serializers.IntegerField(required=True)
+    
+    car_brand_name = serializers.CharField(max_length=50, required=True)
+    car_model_name = serializers.CharField(max_length=50, required=True)
+    car_name = serializers.CharField(max_length=50, required=True)
+    car_color = serializers.CharField(max_length=50, required=True)
+    car_manufacture_year = serializers.IntegerField(required=True)
+    car_rental_price = serializers.IntegerField(required=True)
     car_image = serializers.CharField(max_length=500, required=False, allow_blank=True)
 
 
@@ -24,17 +23,15 @@ class CarCreateInputSerializer(serializers.Serializer):
             image=validated_data.get('car_image')
         )
 class CarCreateOutputSerializer(serializers.Serializer):
-    car_id = serializers.IntegerField()
-    brand_name = serializers.CharField(source='brand')
-    model_name = serializers.CharField(source='model')
+    id = serializers.IntegerField(source='car_id')
+    car_brand_name = serializers.CharField(source='brand')
+    car_model_name = serializers.CharField(source='model')
     car_name = serializers.CharField(source='name')
     car_color = serializers.CharField(source='color')
-    manufacture_year = serializers.IntegerField(source='year')
-    rental_price = serializers.IntegerField(source='rentalprice')
-    car_image = serializers.CharField(source='image', allow_blank=True, required=False)
-    created_at = serializers.DateTimeField()
-    updated_at = serializers.DateTimeField()
+    car_manufacture_year = serializers.IntegerField(source='year')
+    car_rental_price = serializers.IntegerField(source='rentalprice')
+    car_image = serializers.CharField(source='image')
+    car_created_at = serializers.DateTimeField(source='created_at')
+    car_updated_at = serializers.DateTimeField(source='updated_at')
 
-    class Meta:
-        model = Car
-        fields = ['car_id', 'brand_name', 'model_name', 'car_name', 'car_color', 'manufacture_year', 'rental_price', 'car_image', 'created_at', 'updated_at']
+

@@ -72,6 +72,11 @@ class OfficeViewSet(GenericViewSet):
         serializer = ReservationSerializer()
         columns = [field for field in serializer.fields]
         column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
+        # Fields that requires dropdowns or modal selection 
+        modalselect_fields = ['reservation_car_key', 'reservation_client_key']
+        dropdown_fields = ['reservation_processed_by']
+        column_types = {field: 'modalselect' if field in modalselect_fields else 'dropdown' if field in dropdown_fields else column_types[field] for field in columns}
+
         context = {
             'table_title': 'Reservation Management',
             'columns': columns,  # Add your car fields
@@ -82,7 +87,9 @@ class OfficeViewSet(GenericViewSet):
             'show_add_button': True,
             'add_url': 'reservations:add_reservation',  # URL name for adding a car
             'edit_url': 'reservations:update_reservation', 
-            'delete_url' : 'reservations:delete_reservation'  # URL name for editing a car
+            'delete_url' : 'reservations:delete_reservation',  # URL name for editing a car
+            'modalselect_fields': modalselect_fields,
+            'dropdown_fields': dropdown_fields
         }
         print('those are html types',column_types)
         return render(request, 'reservations.html', context)

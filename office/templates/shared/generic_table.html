@@ -443,11 +443,13 @@
         const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
         modal.show();
     }
+    let column_types = JSON.parse('{{ column_types|dict_to_json|safe }}');
+    console.log('column_types: ', column_types);
+
 
     function viewDetails(item) {
         const data = JSON.parse(item);
         let content = ''; // This will hold the HTML content.
-
         // Loop through the data object.
         for (const key in data) {
             content += `
@@ -471,14 +473,15 @@
             if (key === 'id') {
                 content += `
         <div class="mb-3 d-flex align-items-center">
-            <input type="text" class="form-control w-50" id="edit:${key}" value="${data[key]}" hidden disabled>
+            <input class="form-control w-50" id="edit:${key}" value="${data[key]} type="${column_types[key]}" hidden disabled>
         </div>
     `;
-            } else {
+            } else if (!(key.indexOf('updated_at') !== -1 || key.indexOf('created_at') !== -1)) {
+                console.log(column_types[key]);
                 content += `
         <div class="mb-3 d-flex align-items-center">
             <label for="edit:${key}" class="form-label me-2 w-25 text-start">${key}</label>
-            <input type="text" class="form-control w-50" id="edit:${key}" value="${data[key]}">
+            <input class="form-control w-50" id="edit:${key}" value="${data[key]}" type="${column_types[key]}">
         </div>
     `;
             }

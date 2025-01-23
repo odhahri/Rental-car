@@ -468,16 +468,14 @@
     function editDetails(item) {
         const data = JSON.parse(item);
         let content = ''; // This will hold the HTML content.
-        // Loop through the data object.
         for (const key in data) {
             if (key === 'id') {
                 content += `
         <div class="mb-3 d-flex align-items-center">
-            <input class="form-control w-50" id="edit:${key}" value="${data[key]} type="${column_types[key]}" hidden disabled>
+            <input class="form-control w-50" id="edit:${key}" value="${data[key]}" type="${column_types[key]}" hidden disabled>
         </div>
     `;
             } else if (!(key.indexOf('updated_at') !== -1 || key.indexOf('created_at') !== -1)) {
-                console.log(column_types[key]);
                 content += `
         <div class="mb-3 d-flex align-items-center">
             <label for="edit:${key}" class="form-label me-2 w-25 text-start">${key}</label>
@@ -499,23 +497,47 @@
 
     function saveEdit(id) {
         const updatedData = {}; // This will hold the updated form data.
-
-        // Loop through each field and get the updated value.
         const form = document.querySelector('#editModal .modal-body');
         const inputs = form.querySelectorAll('input');
 
+        // Loop through each field and get the updated value.
         inputs.forEach(input => {
             const key = input.id.split(':')[1]; // Extract the key from the input ID (e.g., "edit:name" -> "name").
-            updatedData[key] = input.value; // Store the updated value in the updatedData object.
+
+            // Handle file inputs (assume the image input has type="file")
+            if (input.type === 'file' && input.files.length > 0) {
+                const file = input.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function (e) {
+                    updatedData[key] = e.target.result; // Base64-encoded image string
+                    console.log(`Encoded image for key ${key}:`, updatedData[key]);
+
+                    // After encoding the image, proceed with AJAX submission
+                    if (Object.keys(updatedData).length === inputs.length) {
+                        sendAjaxRequest(id, updatedData);
+                    }
+                };
+
+                reader.readAsDataURL(file); // Convert the file to Base64 string
+            } else {
+                updatedData[key] = input.value; // Store the updated value for text inputs
+            }
         });
 
-        // Optional validation or confirmation check
+        // Proceed if there are no files to encode
+        if (!Array.from(inputs).some(input => input.type === 'file')) {
+            sendAjaxRequest(id, updatedData);
+        }
+    }
+
+    function sendAjaxRequest(id, updatedData) {
         if (!id || id !== updatedData['id']) {
             console.error('Invalid ID or ID mismatch.');
             return;
         }
 
-        console.log(updatedData); // For demonstration purposes, log the updated data.
+        console.log(updatedData); // Log the updated data.
 
         // Construct the AJAX call to save the changes
         const url = `{% url edit_url 0 %}`.replace(0, id);
@@ -527,9 +549,8 @@
             contentType: 'application/json', // Ensure the data is sent as JSON
             data: JSON.stringify(updatedData),
             success: function (response) {
-                // alert(response);
-                // Reload or update the UI as needed
-                location.reload();
+                alert('Changes saved successfully.');
+                location.reload(); // Reload the page or update the UI as needed
             },
             error: function (xhr) {
                 console.error('Failed to update item:', xhr.responseText || xhr);
@@ -547,12 +568,8 @@
         $.ajax({
             url: url,
             type: 'DELETE',
-            // headers: {
-            //     'X-CSRFToken': '{{ csrf_token }}' // Ensure CSRF token is included
-            // },
+
             success: function (response) {
-                // alert(response.message);
-                // Optionally refresh the page or remove the item from the DOM
                 location.reload();
             },
             error: function (xhr) {
@@ -563,22 +580,21 @@
     function openAddModal(columns) {
 
         const data = JSON.parse(columns);
-        console.log(data);
+        console.log('data : ', data);
         let content = ''; // This will hold the HTML content.
         // Loop through the data object.
         for (const key in data) {
-            console.log(key);
 
-            if (data[key] === 'id' || data[key].indexOf ('updated_at') !== -1 || data[key].indexOf ('created_at') !== -1) {
+            if (data[key] === 'id' || data[key].indexOf('updated_at') !== -1 || data[key].indexOf('created_at') !== -1) {
                 continue;
             }
-                content += `
+            content += `
         <div class="mb-3 d-flex align-items-center">
             <label for="add:${data[key]}" class="form-label me-2 w-25 text-start">${data[key]}</label>
-            <input type="text" class="form-control w-50" id="add:${data[key]}" value="">
+            <input type="${column_types[data[key]]}" class="form-control w-50" id="add:${data[key]}" value="">
         </div>
     `;
-            
+
         }
 
         document.querySelector('#addModal .modal-body #addForm').innerHTML = content;

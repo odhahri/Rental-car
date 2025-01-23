@@ -33,6 +33,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'app_localtion_car_ssr_project.shared',
     'office.apps.OfficeConfig',
     'cars.apps.CarsConfig',
     'reservation.apps.ReservationConfig',

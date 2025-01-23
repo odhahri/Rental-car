@@ -8,8 +8,7 @@ class BaseUser(ModelWrapper):
     lname = models.CharField(max_length=50 , null=False, blank=False)
     email = models.EmailField(max_length=50, unique=True, null=False, blank=False)
     phone = models.CharField(max_length=50  , unique=True, null=False, blank=False)
-    #  base 64 image 
-    image = models.TextField(max_length=500, blank=True, null=True)
+
     class Meta:
         abstract = True
 

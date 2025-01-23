@@ -111,7 +111,8 @@ class OfficeViewSet(GenericViewSet):
             'show_add_button': True,
             'add_url': 'clients:add_client',  # URL name for adding a car
             'edit_url': 'clients:update_client', 
-            'delete_url' : 'clients:delete_client'  # URL name for editing a car
+            'delete_url' : 'clients:delete_client',  # URL name for editing a car
+            'column_types': column_types,
         }
         print('those are html types',column_types)
         return render(request, 'clients.html', context)

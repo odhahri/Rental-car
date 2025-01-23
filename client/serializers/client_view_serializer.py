@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from client.models import Client
+from client.serializers.client_create_serializer import ClientCreateBlobSerializer
 
 
 class ClientSerializer(serializers.Serializer):
@@ -9,8 +10,10 @@ class ClientSerializer(serializers.Serializer):
     user_email = serializers.EmailField(source='email')
     user_first_name = serializers.CharField(source='fname')
     user_last_name = serializers.CharField(source='lname')
-    client_phone_number = serializers.CharField(source='phone')
-    client_image = serializers.CharField(source='image')
-    client_identity = serializers.CharField(source='identity')
-    client_created_at = serializers.DateTimeField(source='created_at')
-    client_updated_at = serializers.DateTimeField(source='updated_at')
+    user_phone_number = serializers.IntegerField(source='phone')
+    # user_image = serializers.ImageField(source='image')
+    user_identity = serializers.CharField(source='identity')
+    user_created_at = serializers.DateTimeField(source='created_at')
+    user_updated_at = serializers.DateTimeField(source='updated_at')
+    user_image = ClientCreateBlobSerializer(source='blobs', many=True)
+

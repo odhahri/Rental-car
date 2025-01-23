@@ -18,8 +18,6 @@ clean-migrations:
 	@powershell -Command "Get-ChildItem -Path . -Recurse -Directory -Filter migrations | ForEach-Object { Get-ChildItem -Path $$_.FullName -File | Where-Object { $$_.Name -ne '__init__.py' -and ($$_.Extension -eq '.py' -or $$_.Extension -eq '.pyc') } | Remove-Item -Force }"
 	@echo "All migration files have been cleaned except __init__.py"
 
+
 makemigraterun:
-	CALL conda.bat activate rental-car
-	python manage.py makemigrations
-	python manage.py migrate
-	python manage.py runserver
+	CALL conda.bat activate rental-car && python manage.py makemigrations && python manage.py migrate && python manage.py runserver

@@ -26,12 +26,10 @@ class AgentService():
     
     def update(self,request,pk):
         agent = Agent.objects.get(pk=pk)
-        serializer = AgentCreateInputSerializer(instance=agent,data=request.data)
+        serializer = AgentUpdateSerializer(instance = agent, data = request.data)
         serializer.is_valid(raise_exception=True)
-        agent = serializer.save()
-        outputserializer = AgentUpdateSerializer(agent)
-        # outputserializer.is_valid(raise_exception=True)
-        return outputserializer.data
+        serializer.save()
+        return serializer.validated_data
     
     def delete(self,pk):
         agent = Agent.objects.get(pk=pk)

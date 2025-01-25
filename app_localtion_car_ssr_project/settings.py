@@ -33,8 +33,8 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'app_localtion_car_ssr_project.shared',
     'office.apps.OfficeConfig',
+    'common.apps.CommonConfig',
     'cars.apps.CarsConfig',
     'reservation.apps.ReservationConfig',
     'client.apps.ClientConfig',
@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
 ]
 
 MIDDLEWARE = [

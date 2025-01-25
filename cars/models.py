@@ -1,6 +1,7 @@
 from django.db import models
 
-from app_localtion_car_ssr_project.shared.models.modelWrapper import ModelWrapper
+from common.shared.models.modelWrapper import ModelWrapper
+
 
 class Car(ModelWrapper):
     car_id = models.AutoField(primary_key=True)

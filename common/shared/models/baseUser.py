@@ -1,6 +1,7 @@
 
-from app_localtion_car_ssr_project.shared.models.modelWrapper import ModelWrapper
 from django.db import models
+
+from common.shared.models.modelWrapper import ModelWrapper
 
 class BaseUser(ModelWrapper):
     username = models.CharField(max_length=50, unique=True, null=False, blank=False)

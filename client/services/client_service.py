@@ -1,26 +1,28 @@
 
 from client.models import Client
-from client.serializers.client_create_serializer import ClientCreateBlobSerializer, ClientCreateInputSerializer, ClientCreateOutputSerializer 
+from client.serializers.client_create_serializer import  ClientCreateInputSerializer, ClientCreateOutputSerializer 
 from client.serializers.client_update_serializer import ClientUpdateSerializer
 from client.serializers.client_view_serializer import ClientSerializer
+from common.shared.serializers.user_blob_serializer import UserCreateBlobSerializer
+
 
 class ClientService():
     def create(self, request):
-
-        
         serializer = ClientCreateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         client = serializer.save()
         output_serializer = ClientCreateOutputSerializer(client)
+
         print('output_serializer',output_serializer.data)
-        # i would like to take the id from the outputserilizer and combine it with user_image from the request data and pass them to the blob serializer 
         blob_data = {
-        'id': client.client_id,  # Pass client.id to the blob
-        'user_image': request.data.get('user_image')  # Pass user_image data
+        'user': Client.objects.get(pk=output_serializer.id),  # Pass client.id to the blob
+        'user_images': request.data.get('user_images'),  # Pass user_image data
+        'nature': 'photos'  # Pass nature of the blob
     }
-        blobserializer = ClientCreateBlobSerializer(data=blob_data)
-        blobserializer.is_valid(raise_exception=True)
-        blob = blobserializer.save()
+        
+        userBlobSerializer = UserCreateBlobSerializer(data=blob_data)
+        userBlobSerializer.is_valid(raise_exception=True)
+        userBlobSerializer.save()
         return output_serializer.data
     
     

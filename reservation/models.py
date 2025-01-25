@@ -1,9 +1,9 @@
 from django.db import models
 
 from agent.models import Agent
-from app_localtion_car_ssr_project.shared.models.modelWrapper import ModelWrapper
 from cars.models import Car
 from client.models import Client
+from common.shared.models.modelWrapper import ModelWrapper
 
 class Reservation(ModelWrapper):
 

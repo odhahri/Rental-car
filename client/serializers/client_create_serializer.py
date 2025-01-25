@@ -1,15 +1,6 @@
 from rest_framework import serializers
-from client.models import CBlob, Client
+from client.models import  Client
 
-class ClientCreateBlobSerializer(serializers.Serializer):
-    user_image = serializers.CharField(max_length=5000)  # For base64 image encoding
-    id = serializers.IntegerField()
-
-    def create(self, validated_data):
-        return CBlob.objects.create(
-            client=validated_data.get('id'),
-            blob=validated_data.get('user_image')
-        )
 class ClientCreateInputSerializer(serializers.Serializer):
     user_name = serializers.CharField(max_length=150)
     user_first_name = serializers.CharField(max_length=50)

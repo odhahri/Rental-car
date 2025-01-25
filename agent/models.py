@@ -1,6 +1,7 @@
 from django.db import models
 
-from app_localtion_car_ssr_project.shared.models.baseUser import BaseUser
+from common.shared.models.baseUser import BaseUser
+
 
 class Agent(BaseUser):
     agent_id = models.AutoField(primary_key=True)  

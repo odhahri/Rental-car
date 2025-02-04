@@ -1,9 +1,7 @@
-from rest_framework import serializers
-
 from django.contrib.contenttypes.models import ContentType
-
-from common.models import UBlob
-
+from rest_framework import serializers
+from client.models import Client
+from common.models import UBlob  # Import your models
 
 class ClientSerializer(serializers.Serializer):
     id = serializers.IntegerField(source='client_id')
@@ -15,19 +13,22 @@ class ClientSerializer(serializers.Serializer):
     user_identity = serializers.CharField(source='identity')
     user_created_at = serializers.DateTimeField(source='created_at')
     user_updated_at = serializers.DateTimeField(source='updated_at')
-
-    # Add blobs as a nested list
-    user_blobs = serializers.SerializerMethodField()
+    user_blobs = serializers.SerializerMethodField()  # Custom field for UBlob instances
 
     def get_user_blobs(self, obj):
-        content_type = ContentType.objects.get_for_model(obj)
-        blobs = UBlob.objects.filter(user=content_type, user_id=obj.client_id)  # Filter blobs for this client
+        # Get the ContentType for the Client model
+        content_type = ContentType.objects.get_for_model(Client)
+
+        # Filter UBlob instances for this Client
+        ublobs = UBlob.objects.filter(content_type=content_type, object_id=obj.client_id)
+
+        # Serialize the UBlob instances
         return [
             {
-                "blob_id": blob.blob_id,
-                "blob": blob.blob,
-                "nature": blob.nature,
-                "order": blob.order
+                'blob_id': ublob.blob_id,
+                'blob': ublob.blob,
+                'nature': ublob.nature,
+                'order': ublob.order
             }
-            for blob in blobs
+            for ublob in ublobs
         ]

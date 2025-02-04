@@ -15,14 +15,14 @@ class ClientService():
 
         print('output_serializer',output_serializer.data)
         blob_data = {
-        'user': Client.objects.get(pk=output_serializer.id),  # Pass client.id to the blob
-        'user_images': request.data.get('user_images'),  # Pass user_image data
+        'user': output_serializer.data['id'],  # Pass client.id to the blob
+        'user_images': request.data.get('user_blobs'),  # Pass user_image data
         'nature': 'photos'  # Pass nature of the blob
     }
         
-        userBlobSerializer = UserCreateBlobSerializer(data=blob_data)
+        userBlobSerializer = UserCreateBlobSerializer(data=blob_data, model_class=Client)
         userBlobSerializer.is_valid(raise_exception=True)
-        userBlobSerializer.save()
+        ublobs = userBlobSerializer.save()
         return output_serializer.data
     
     

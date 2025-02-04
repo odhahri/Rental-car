@@ -100,7 +100,7 @@ class OfficeViewSet(GenericViewSet):
         serializer = ClientSerializer()
         columns = [field for field in serializer.fields]
         column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
-
+        column_types['user_blobs'] = 'file'
         context = {
             'table_title': 'Clients Management',
             'columns': columns,  # Add your car fields

@@ -4,7 +4,7 @@ from django.contrib.contenttypes.models import ContentType
 
 class UBlob(models.Model):
     blob_id = models.AutoField(primary_key=True)
-    blob = models.TextField(unique=True, null=False, blank=False)
+    blob = models.BinaryField(null=False, blank=False)  # Use BinaryField for binary data
     nature = models.CharField(max_length=50, null=False, blank=False)
     order = models.IntegerField(null=False, blank=False)
     image_id = models.CharField(max_length=50, null=False, blank=False)  # New field to track image ID

@@ -606,91 +606,140 @@
         modal.show();
     }
 
+    // function saveNewElement() {
+    //     const updatedData = {}; // This will hold the updated form data.
+    //     const form = document.querySelector('#addModal .modal-body');
+    //     const inputs = form.querySelectorAll('input');
+
+    //     // Loop through each input field in the form
+    //     inputs.forEach(input => {
+    //         const key = input.id.split(':')[1]; // Extract the key from the input ID
+
+    //         if (input.type === 'file') {
+    //             const filesArray = [];
+
+    //             // Loop through all selected files
+    //             Array.from(input.files).forEach(file => {
+    //                 const reader = new FileReader();
+
+    //                 reader.onload = function (e) {
+    //                     // Compress and encode the file data
+    //                     compressAndEncode(e.target.result, (compressedBase64) => {
+    //                         const chunks = splitIntoChunks(compressedBase64, 500); // Split into 500-char chunks
+    //                         filesArray.push(chunks);
+
+    //                         // If all files are processed, store them in updatedData
+    //                         if (filesArray.length === input.files.length) {
+    //                             updatedData[key] = filesArray.flat(); // Flatten all chunks into one array
+
+    //                             // If all inputs are processed, send the AJAX request
+    //                             if (Object.keys(updatedData).length === inputs.length) {
+    //                                 sendAjaxRequest(updatedData);
+    //                             }
+    //                         }
+    //                     });
+    //                 };
+
+    //                 reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
+    //             });
+    //         } else {
+    //             // For non-file inputs, directly add the value to updatedData
+    //             updatedData[key] = input.value;
+
+    //             // If all inputs are processed, send the AJAX request
+    //             if (Object.keys(updatedData).length === inputs.length) {
+    //                 sendAjaxRequest(updatedData);
+    //             }
+    //         }
+    //     });
+    // }
+
+    // function compressAndEncode(arrayBuffer, callback) {
+    //     try {
+    //         // Compress the data using pako
+    //         const compressedData = pako.deflate(new Uint8Array(arrayBuffer), { level: 9 });
+
+    //         // Encode the compressed data in Base64
+    //         const base64Compressed = btoa(String.fromCharCode(...compressedData));
+
+    //         callback(base64Compressed);
+    //     } catch (err) {
+    //         console.error("Compression failed:", err);
+    //     }
+    // }
+    // function splitIntoChunks(base64String, chunkSize = 500) {
+    //     const chunks = [];
+    //     for (let i = 0; i < base64String.length; i += chunkSize) {
+    //         chunks.push(base64String.slice(i, i + chunkSize));
+    //     }
+    //     return chunks;
+    // }
+    // // Function to send the AJAX request
+    // function sendAjaxRequest(updatedData) {
+    //     const url = `{% url add_url %}`; // Django URL
+
+    //     $.ajax({
+    //         url: url,
+    //         type: 'POST',
+    //         contentType: 'application/json', // Ensure the data is sent as JSON
+    //         data: JSON.stringify(updatedData),
+    //         success: function (response) {
+    //             console.log('Response:', response);
+    //             location.reload(); // Reload or update the UI as needed
+    //         },
+    //         error: function (xhr) {
+    //             console.error('Failed to update item:', xhr.responseText || xhr);
+    //             alert('Failed to save changes. Please try again.');
+    //         }
+    //     });
+    // }
+
     function saveNewElement() {
-        const updatedData = {}; // This will hold the updated form data.
         const form = document.querySelector('#addModal .modal-body');
         const inputs = form.querySelectorAll('input');
+        const formData = new FormData(); // Use FormData to handle binary files
 
         // Loop through each input field in the form
         inputs.forEach(input => {
             const key = input.id.split(':')[1]; // Extract the key from the input ID
 
             if (input.type === 'file') {
-                const filesArray = [];
-
                 // Loop through all selected files
-                Array.from(input.files).forEach(file => {
-                    const reader = new FileReader();
-
-                    reader.onload = function (e) {
-                        // Compress and encode the file data
-                        compressAndEncode(e.target.result, (compressedBase64) => {
-                            const chunks = splitIntoChunks(compressedBase64, 500); // Split into 500-char chunks
-                            filesArray.push(chunks);
-
-                            // If all files are processed, store them in updatedData
-                            if (filesArray.length === input.files.length) {
-                                updatedData[key] = filesArray.flat(); // Flatten all chunks into one array
-
-                                // If all inputs are processed, send the AJAX request
-                                if (Object.keys(updatedData).length === inputs.length) {
-                                    sendAjaxRequest(updatedData);
-                                }
-                            }
-                        });
-                    };
-
-                    reader.readAsArrayBuffer(file); // Read file as ArrayBuffer
+                Array.from(input.files).forEach((file, index) => {
+                    // Append each file to the FormData object
+                    formData.append(`${key}`, file);
                 });
             } else {
-                // For non-file inputs, directly add the value to updatedData
-                updatedData[key] = input.value;
-
-                // If all inputs are processed, send the AJAX request
-                if (Object.keys(updatedData).length === inputs.length) {
-                    sendAjaxRequest(updatedData);
-                }
+                // For non-file inputs, append the value to FormData
+                formData.append(key, input.value);
             }
         });
+
+        // Send the AJAX request with FormData
+        sendAjaxRequest(formData);
     }
 
-    function compressAndEncode(arrayBuffer, callback) {
-        try {
-            // Compress the data using pako
-            const compressedData = pako.deflate(new Uint8Array(arrayBuffer));
-
-            // Encode the compressed data in Base64
-            const base64Compressed = btoa(String.fromCharCode(...compressedData));
-
-            callback(base64Compressed);
-        } catch (err) {
-            console.error("Compression failed:", err);
-        }
-    }
-    function splitIntoChunks(base64String, chunkSize = 500) {
-        const chunks = [];
-        for (let i = 0; i < base64String.length; i += chunkSize) {
-            chunks.push(base64String.slice(i, i + chunkSize));
-        }
-        return chunks;
-    }
     // Function to send the AJAX request
-    function sendAjaxRequest(updatedData) {
+    function sendAjaxRequest(formData) {
         const url = `{% url add_url %}`; // Django URL
 
         $.ajax({
             url: url,
             type: 'POST',
-            contentType: 'application/json', // Ensure the data is sent as JSON
-            data: JSON.stringify(updatedData),
+            data: formData, // Send FormData directly
+            contentType: false, // Important for binary data
+            processData: false, // Important for binary data
             success: function (response) {
                 console.log('Response:', response);
                 location.reload(); // Reload or update the UI as needed
+
+
+
             },
             error: function (xhr) {
                 console.error('Failed to update item:', xhr.responseText || xhr);
                 alert('Failed to save changes. Please try again.');
             }
         });
-    }
+    } 
 </script>

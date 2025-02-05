@@ -1,9 +1,15 @@
+import zlib  # For general binary data compression
+from PIL import Image  # For image compression
+from io import BytesIO  # For in-memory binary streams
 from rest_framework import serializers
 from django.contrib.contenttypes.models import ContentType
 from common.models import UBlob  # Import your UBlob model
 
 class UserCreateBlobSerializer(serializers.Serializer):
-    user_images = serializers.ListField(child=serializers.CharField(), write_only=True)  # Array of base64-encoded images
+    user_images = serializers.ListField(
+        child=serializers.FileField(),  # Use FileField for binary files
+        write_only=True
+    )
     nature = serializers.CharField(default='photos')  # Default nature is 'photos'
 
     def __init__(self, *args, **kwargs):
@@ -14,6 +20,37 @@ class UserCreateBlobSerializer(serializers.Serializer):
         # Dynamically add the `user` field with the appropriate queryset
         if self.model_class:
             self.fields['user'] = serializers.PrimaryKeyRelatedField(queryset=self.model_class.objects.all())
+
+    def compress_image(self, binary_data, format='WEBP', quality=85):
+        """
+        Compress an image using Pillow.
+        :param binary_data: Binary data of the image.
+        :param format: Output format (e.g., 'WEBP', 'JPEG').
+        :param quality: Compression quality (0-100).
+        :return: Compressed binary data.
+        """
+        try:
+            image = Image.open(BytesIO(binary_data))
+            output = BytesIO()
+            image.save(output, format=format, quality=quality)  # Compress the image
+            return output.getvalue()
+        except Exception as e:
+            print(f"Image compression failed: {e}")
+            return binary_data  # Return original data if compression fails
+
+    def compress_data(self, binary_data, content_type):
+        """
+        Compress binary data based on its content type.
+        :param binary_data: Binary data to compress.
+        :param content_type: MIME type of the data (e.g., 'image/jpeg').
+        :return: Compressed binary data.
+        """
+        if content_type.startswith('image/'):
+            # Compress images using Pillow
+            return self.compress_image(binary_data, format='WEBP', quality=85)
+        else:
+            # Compress non-image data using zlib
+            return zlib.compress(binary_data, level=9)
 
     def create(self, validated_data):
         # Extract user_images and remove it from validated_data
@@ -26,28 +63,29 @@ class UserCreateBlobSerializer(serializers.Serializer):
         # Get the ContentType for the model class
         content_type = ContentType.objects.get_for_model(self.model_class)
 
-        # Split each image into chunks and create UBlob instances
+        # Create UBlob instances for each uploaded file
         blobs_to_create = []
         for image_index, user_image in enumerate(user_images):
-            order = 0  # Initialize order for each image
-            while len(user_image) > 0:
-                # Take the first 500 characters
-                chunk = user_image[:500]
-                user_image = user_image[500:]  # Remove the processed chunk
+            # Read the binary data from the uploaded file
+            binary_data = user_image.read()
 
-                # Create a UBlob instance for the chunk
-                blobs_to_create.append(
-                    UBlob(
-                        content_type=content_type,
-                        object_id=user.pk,
-                        blob=chunk,  # Store the chunk
-                        nature=nature,
-                        order=order,
-                        image_id=f"image_{image_index}"  # Track which image this chunk belongs to
-                    )
+            # Get the MIME type of the file
+            file_content_type = user_image.content_type
+
+            # Compress the binary data based on its content type
+            compressed_data = self.compress_data(binary_data, file_content_type)
+
+            # Create a UBlob instance for the compressed binary data
+            blobs_to_create.append(
+                UBlob(
+                    content_type=content_type,
+                    object_id=user.pk,
+                    blob=compressed_data,  # Store the compressed binary data
+                    nature=nature,
+                    order=image_index,  # Use image_index as the order
+                    image_id=f"image_{image_index}"  # Track which image this blob belongs to
                 )
-
-                order += 1  # Increment order for the next chunk
+            )
 
         # Bulk create UBlob instances for performance
         return UBlob.objects.bulk_create(blobs_to_create)

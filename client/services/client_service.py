@@ -11,19 +11,31 @@ class ClientService():
         serializer = ClientCreateInputSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         client = serializer.save()
-        output_serializer = ClientCreateOutputSerializer(client)
+        client_output_serializer = ClientCreateOutputSerializer(client)
 
-        print('output_serializer',output_serializer.data)
-        blob_data = {
-        'user': output_serializer.data['id'],  # Pass client.id to the blob
-        'user_images': request.data.get('user_blobs'),  # Pass user_image data
-        'nature': 'photos'  # Pass nature of the blob
-    }
-        
-        userBlobSerializer = UserCreateBlobSerializer(data=blob_data, model_class=Client)
-        userBlobSerializer.is_valid(raise_exception=True)
-        ublobs = userBlobSerializer.save()
-        return output_serializer.data
+        # Handle binary files from request.FILES
+        if 'user_blobs' in request.FILES:
+            user_blobs = request.FILES.getlist('user_blobs')  # Get list of uploaded files
+            blob_data = {
+                'user': client_output_serializer.data['id'],  # Pass client.id to the blob
+                'user_images': user_blobs,  # Pass the list of binary files
+                'nature': 'photos'  # Set nature to 'photos'
+            }
+
+            # Serialize and save the binary files
+            userBlobSerializer = UserCreateBlobSerializer(data=blob_data, model_class=Client)
+            userBlobSerializer.is_valid(raise_exception=True)
+            ublobs = userBlobSerializer.save()
+        # if identity images were passed, store them in ublob table with nature as 'identity'
+        # identity_data = {
+        # 'user': client_output_serializer.data['id'], 
+        # 'user_images': request.data.get('user_identity'),  
+        # 'nature': 'identity'  
+        # }
+        # userIdentitySerializer = UserCreateBlobSerializer(data=identity_data, model_class=Client)
+        # userIdentitySerializer.is_valid(raise_exception=True)
+        # uIdentity = userIdentitySerializer.save()
+        # return client_output_serializer.data
     
     
     def list(self):

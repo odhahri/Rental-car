@@ -46,8 +46,7 @@ class ClientService():
     def get(self,pk):
         client = Client.objects.get(pk=pk)
         serializer = ClientSerializer(client)
-        serializer.is_valid(raise_exception=True)
-        return serializer.validated_data
+        return serializer.data
     
     def update(self,request,pk):
         client = Client.objects.get(pk=pk)

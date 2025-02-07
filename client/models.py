@@ -10,7 +10,7 @@ class Client(BaseUser):
 
 
     def __str__(self):
-        return self.date
+        return self.client_id
     class Meta:
         db_table = "client"
         verbose_name = "Client"

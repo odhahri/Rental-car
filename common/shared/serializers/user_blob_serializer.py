@@ -81,9 +81,7 @@ class UserCreateBlobSerializer(serializers.Serializer):
                     content_type=content_type,
                     object_id=user.pk,
                     blob=compressed_data,  # Store the compressed binary data
-                    nature=nature,
-                    order=image_index,  # Use image_index as the order
-                    image_id=f"image_{image_index}"  # Track which image this blob belongs to
+                    nature=nature,  
                 )
             )
 
@@ -96,6 +94,4 @@ class UserCreateBlobSerializer(serializers.Serializer):
             'blob_id': instance.blob_id,
             'user_id': instance.object_id,
             'nature': instance.nature,
-            'order': instance.order,
-            'image_id': instance.image_id  # Include image_id in the response
         }

@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'common.apps.CommonConfig',
     'cars.apps.CarsConfig',
     'reservation.apps.ReservationConfig',
+    'uidentification.apps.UserIdentificationConfig',
     'client.apps.ClientConfig',
     'agent.apps.AgentConfig',
     'django.contrib.admin',
@@ -66,6 +67,7 @@ TEMPLATES = [
         'DIRS': [
             os.path.join(BASE_DIR, 'office/templates'),  # Add this if templates are specific to the app
             os.path.join(BASE_DIR, 'cars/templates'),
+            os.path.join(BASE_DIR, 'user_identification/templates'),
             # os.path.join(BASE_DIR, 'reservation/templates'),
             # os.path.join(BASE_DIR, 'client/templates'),
             # os.path.join(BASE_DIR, 'agent/templates'),

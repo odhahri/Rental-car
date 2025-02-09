@@ -17,6 +17,8 @@ class Reservation(ModelWrapper):
     car = models.ForeignKey(Car, on_delete=models.CASCADE, related_name='reservations', null=False, blank=False)
     status = models.CharField(max_length=10, choices=Status.choices, default=Status.PENDING, null=False, blank=False)
     processedby = models.ForeignKey(Agent, on_delete=models.CASCADE, related_name='agents', null=True, blank=True)
+    start_date = models.DateTimeField(null=False, blank=False,default=None)
+    end_date = models.DateTimeField(null=False, blank=False,default=None)
     def __str__(self):
         return self.client,self.car
     

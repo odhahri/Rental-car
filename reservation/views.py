@@ -29,7 +29,7 @@ class ReservationViewSet(GenericViewSet):
     
     def update_reservation(self, request, pk):
         reservation = self.reservation_service.update(request, pk)
-        return Response(data=reservation, status=200)
+        return Response(data='updated successfuly ! ', status=200)
     
 
     def delete_reservation(self, request, pk):

@@ -11,7 +11,6 @@ class Car(ModelWrapper):
     color = models.CharField(max_length=100)
     year = models.IntegerField(null=False, blank=False)
     rentalprice = models.IntegerField(null=False, blank=False)
-    image = models.CharField(max_length=500, null=True, blank=True)
     
     def __str__(self):
         return self.model

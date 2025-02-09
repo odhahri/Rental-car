@@ -10,7 +10,6 @@ class ReservationSerializer(serializers.Serializer):
     reservation_start_date = serializers.DateTimeField(source='start_date')
     reservation_end_date = serializers.DateTimeField(source='end_date')
     reservation_status = serializers.CharField(source='status')
-    reservation_processed_by = serializers.CharField(source='processedby')
+    reservation_processed_by = serializers.IntegerField(source='processedby_id')
     reservation_created_at = serializers.DateTimeField(source='created_at')
     reservation_updated_at = serializers.DateTimeField(source='updated_at')
-    reservation_deleted_at = serializers.DateTimeField(source='deleted_at')

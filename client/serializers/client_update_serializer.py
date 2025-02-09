@@ -16,7 +16,7 @@ class ClientUpdateSerializer(serializers.Serializer):
         instance.lname = validated_data.get('user_last_name', instance.lname)
         instance.email = validated_data.get('user_email', instance.email)
         instance.phone = validated_data.get('user_phone_number', instance.phone)
-        instance.image = validated_data.get('user_image', instance.image)
+        # instance.image = validated_data.get('user_image', instance.image)
         
         instance.save()
         return instance

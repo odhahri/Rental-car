@@ -3,6 +3,8 @@ from cars.models import Car
 from cars.serializers.car_create_serializer import CarCreateInputSerializer, CarCreateOutputSerializer
 from cars.serializers.car_update_serializer import CarUpdateSerializer
 from cars.serializers.car_view_serializer import CarSerializer
+from common.models import CBlob
+from common.shared.serializers.user_blob_serializer import CarBlobSerializer, CarCreateBlobSerializer
 class CarService():
     def create(self, request):
         serializer = CarCreateInputSerializer(data=request.data)
@@ -39,4 +41,27 @@ class CarService():
         car = Car.objects.get(name=name)
         serializer = CarSerializer(car)
         return serializer.validated_data
+    
+    def add_blobs_by_id(self,request,pk):
+        car = Car.objects.get(pk=pk)
+
+       
+        blob_photo_data = {
+            'car_images': request.FILES.getlist('photo'),
+            'nature': 'photo',
+            'car': car.car_id
+        }
+        serializer = CarCreateBlobSerializer( data = blob_photo_data)
+        serializer.is_valid(raise_exception=True)
+        carblob = serializer.save()
+        carBlobSerializer = CarBlobSerializer(carblob, many=True)
+
+        
+        return carBlobSerializer.data
+    
+    def get_blobs_by_id(self,pk,nature):
+        carblob = CBlob.objects.filter(car = pk)
+        serializer = CarBlobSerializer(carblob, many=True)
+        return serializer.data
+    
     

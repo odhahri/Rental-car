@@ -9,5 +9,7 @@ urlpatterns = [
     path('update/<int:pk>/', ClientViewSet.as_view({'put': 'update_client'}),name='update_client'),
     path('delete/<int:pk>/', ClientViewSet.as_view({'delete': 'delete_client'}), name='delete_client'),
     path('get_by_name/<str:name>/', ClientViewSet.as_view({'get': 'get_client_by_name'})),
+    path('get_blobs_by_id_and_nature/<int:pk>/<str:nature>', ClientViewSet.as_view({'get': 'get_blobs_by_id_and_nature'}),name='get_blobs_by_id_and_nature'),
+    path('add_blobs_by_id/<int:pk>/', ClientViewSet.as_view({'post': 'add_blobs_by_id'}), name='add_blobs_by_id'),
 
 ]

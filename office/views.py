@@ -1,6 +1,5 @@
 from django.shortcuts import render
 
-# Create your views here.
 
 from rest_framework.viewsets import GenericViewSet
 
@@ -33,18 +32,19 @@ class OfficeViewSet(GenericViewSet):
         column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
         context = {
             'table_title': 'Cars Management',
-            'columns': columns,  # Add your car fields
+            'columns': columns,  
             'items': cars_list,
-            
-            # Add your cars queryset
+            'can_have_blobs': True,
+            'possible_blob_natures': ['photo'],
+            'add_blob_url': 'cars:add_blobs_by_id',
+            'get_blobs_url': 'cars:get_blobs_by_id',
             'show_actions': True,
             'show_add_button': True,
-            'add_url': 'cars:add_car',  # URL name for adding a car
+            'add_url': 'cars:add_car',  
             'edit_url': 'cars:update_car', 
-            'delete_url' : 'cars:delete_car',  # URL name for editing a car
+            'delete_url' : 'cars:delete_car', 
             'column_types': column_types,
         }
-        print('those are html types',column_types)
         return render(request, 'cars.html', context)
     
     def show_office_agents_page(self, request):
@@ -55,18 +55,19 @@ class OfficeViewSet(GenericViewSet):
 
         context = {
             'table_title': 'Agents Management',
-            'columns': columns,  # Add your car fields
+            'columns': columns,  
             'items': agents_list,
-            
-            # Add your cars queryset
+            'can_have_blobs': True,
+            'possible_blob_natures': ['photo'],
+            'add_blob_url': 'agents:add_blobs_by_id',
+            'get_blobs_url': 'agents:get_blobs_by_id_and_nature',
             'show_actions': True,
             'show_add_button': True,
-            'add_url': 'agents:add_agent',  # URL name for adding a car
+            'add_url': 'agents:add_agent',  
             'edit_url': 'agents:update_agent', 
-            'delete_url' : 'agents:delete_agent',  # URL name for editing a car
+            'delete_url' : 'agents:delete_agent',  
             'column_types': column_types,
         }
-        print('those are html types',column_types)
         return render(request, 'agents.html', context)
     
     def show_office_reservations_page(self, request):
@@ -74,25 +75,24 @@ class OfficeViewSet(GenericViewSet):
         serializer = ReservationSerializer()
         columns = [field for field in serializer.fields]
         column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
-        # Fields that requires dropdowns or modal selection 
         modalselect_fields = ['reservation_car_key', 'reservation_client_key']
         dropdown_fields = ['reservation_processed_by']
         column_types = {field: 'modalselect' if field in modalselect_fields else 'dropdown' if field in dropdown_fields else column_types[field] for field in columns}
-
         context = {
             'table_title': 'Reservation Management',
-            'columns': columns,  # Add your car fields
+            'columns': columns,  
             'items': reservations_list,
-            
-            # Add your cars queryset
+            'can_have_blobs': False,
+            'possible_blob_natures': [],
+            'add_blob_url': 'null',
+            'get_blobs_url': 'null',
             'show_actions': True,
             'show_add_button': True,
-            'add_url': 'reservations:add_reservation',  # URL name for adding a car
+            'add_url': 'reservations:add_reservation',  
             'edit_url': 'reservations:update_reservation', 
-            'delete_url' : 'reservations:delete_reservation',  # URL name for editing a car
+            'delete_url' : 'reservations:delete_reservation', 
             'column_types': column_types,
         }
-        print('those are html types',column_types)
         return render(request, 'reservations.html', context)
     
     def show_office_clients_page(self, request):
@@ -100,19 +100,19 @@ class OfficeViewSet(GenericViewSet):
         serializer = ClientSerializer()
         columns = [field for field in serializer.fields]
         column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
-        column_types['user_blobs'] = 'file'
         context = {
             'table_title': 'Clients Management',
-            'columns': columns,  # Add your car fields
+            'columns': columns,  
             'items': clients_list,
-            
-            # Add your cars queryset
+            'can_have_blobs': True,
+            'possible_blob_natures': ['photo', 'identity'],
+            'add_blob_url': 'clients:add_blobs_by_id',
+            'get_blobs_url': 'clients:get_blobs_by_id_and_nature',
             'show_actions': True,
             'show_add_button': True,
-            'add_url': 'clients:add_client',  # URL name for adding a car
+            'add_url': 'clients:add_client',  
             'edit_url': 'clients:update_client', 
-            'delete_url' : 'clients:delete_client',  # URL name for editing a car
+            'delete_url' : 'clients:delete_client',  
             'column_types': column_types,
         }
-        print('those are html types',column_types)
         return render(request, 'clients.html', context)

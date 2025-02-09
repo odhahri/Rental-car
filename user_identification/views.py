@@ -23,8 +23,9 @@ class UserIdentificationViewSet(GenericViewSet):
     
 
      # HTML-based Views
-    def signin_page(self, request):
-        pass
+    def identification_page(self, request):
+        return render(request, 'identification/identification.html', {'user as': False})
+        
 
     def signup_page(self, request, pk):
         pass

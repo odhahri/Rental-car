@@ -8,6 +8,5 @@ class CarSerializer(serializers.Serializer):
     car_color = serializers.CharField(source='color')
     car_manufacture_year = serializers.IntegerField(source='year')
     car_rental_price = serializers.IntegerField(source='rentalprice')
-    car_image = serializers.CharField(source='image')
 
    

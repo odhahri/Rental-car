@@ -3,7 +3,9 @@ from client.models import Client
 from client.serializers.client_create_serializer import  ClientCreateInputSerializer, ClientCreateOutputSerializer 
 from client.serializers.client_update_serializer import ClientUpdateSerializer
 from client.serializers.client_view_serializer import ClientSerializer
-from common.shared.serializers.user_blob_serializer import UserCreateBlobSerializer
+from common.models import UBlob
+from common.shared.serializers.user_blob_serializer import UserBlobSerializer, UserCreateBlobSerializer
+from django.contrib.contenttypes.models import ContentType
 
 
 class ClientService():
@@ -12,30 +14,7 @@ class ClientService():
         serializer.is_valid(raise_exception=True)
         client = serializer.save()
         client_output_serializer = ClientCreateOutputSerializer(client)
-
-        # Handle binary files from request.FILES
-        if 'user_blobs' in request.FILES:
-            user_blobs = request.FILES.getlist('user_blobs')  # Get list of uploaded files
-            blob_data = {
-                'user': client_output_serializer.data['id'],  # Pass client.id to the blob
-                'user_images': user_blobs,  # Pass the list of binary files
-                'nature': 'photos'  # Set nature to 'photos'
-            }
-
-            # Serialize and save the binary files
-            userBlobSerializer = UserCreateBlobSerializer(data=blob_data, model_class=Client)
-            userBlobSerializer.is_valid(raise_exception=True)
-            ublobs = userBlobSerializer.save()
-        # if identity images were passed, store them in ublob table with nature as 'identity'
-        # identity_data = {
-        # 'user': client_output_serializer.data['id'], 
-        # 'user_images': request.data.get('user_identity'),  
-        # 'nature': 'identity'  
-        # }
-        # userIdentitySerializer = UserCreateBlobSerializer(data=identity_data, model_class=Client)
-        # userIdentitySerializer.is_valid(raise_exception=True)
-        # uIdentity = userIdentitySerializer.save()
-        # return client_output_serializer.data
+        return client_output_serializer.data
     
     
     def list(self):
@@ -69,3 +48,28 @@ class ClientService():
         serializer = ClientSerializer(client)
         return serializer.validated_data
     
+    def get_blobs_by_id_and_nature(self,id,nature):
+        blobs = UBlob.objects.filter(content_type = ContentType.objects.get_for_model(Client), object_id=id,nature=nature)
+        blobs_serializer = UserBlobSerializer(blobs, many=True)
+        return blobs_serializer.data
+    
+    def add_blobs_by_id(self,request,pk):
+        client = Client.objects.get(pk=pk)
+        blob_identity_data = {
+            'user': client.client_id,
+            'user_images': request.FILES.getlist('identity'),
+            'nature': 'identity'
+        }
+        blob_photo_data = {
+            'user': client.client_id,
+            'user_images': request.FILES.getlist('photo'),
+            'nature': 'photo'
+        }
+        userBlobIdentitySerializer = UserCreateBlobSerializer(data=blob_identity_data, model_class=Client)
+        userBlobIdentitySerializer.is_valid(raise_exception=True)
+        uidentityblobs = userBlobIdentitySerializer.save()
+        userBlobPhotoSerializer = UserCreateBlobSerializer(data=blob_photo_data, model_class=Client)
+        userBlobPhotoSerializer.is_valid(raise_exception=True)
+        uphotoblobs = userBlobPhotoSerializer.save()
+        userBlobSerializer = UserBlobSerializer(uidentityblobs, many=True)
+        return userBlobSerializer.data

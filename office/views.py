@@ -75,9 +75,24 @@ class OfficeViewSet(GenericViewSet):
         serializer = ReservationSerializer()
         columns = [field for field in serializer.fields]
         column_types = {field: OfficeService.get_html_input_type(serializer.fields[field]) for field in columns}
-        modalselect_fields = ['reservation_car_key', 'reservation_client_key']
-        dropdown_fields = ['reservation_processed_by']
-        column_types = {field: 'modalselect' if field in modalselect_fields else 'dropdown' if field in dropdown_fields else column_types[field] for field in columns}
+        search_dropdown_fields = ['reservation_car_key', 'reservation_client_key', 'reservation_processed_by']
+        simple_dropdown_fields = ['reservation_status']
+        # column_types = {field: 'dropdown-search' if field in search_dropdown_fields else column_types[field] for field in columns}
+        column_types = {field: 'dropdown-search' if field in search_dropdown_fields else 'dropdown-simple' if field in simple_dropdown_fields else column_types[field] for field in columns}
+        clients = self.client_service.list()  
+        cars = self.car_service.list()  
+        agents = self.agent_service.list()
+        dropdown_data = {
+            'reservation_client_key': clients,
+            'reservation_car_key': cars,
+            'reservation_processed_by': agents,
+            'reservation_status': ['PENDING', 'APPROVED', 'REJECTED'],
+        }
+        toshow = {
+            'reservation_client_key': ['id', 'user_name'], 
+            'reservation_car_key': ['id', 'car_name'], 
+            'reservation_processed_by': ['id', 'user_name'],
+        }
         context = {
             'table_title': 'Reservation Management',
             'columns': columns,  
@@ -92,6 +107,8 @@ class OfficeViewSet(GenericViewSet):
             'edit_url': 'reservations:update_reservation', 
             'delete_url' : 'reservations:delete_reservation', 
             'column_types': column_types,
+            'dropdown_data': dropdown_data,
+            'toshow' : toshow  
         }
         return render(request, 'reservations.html', context)
     

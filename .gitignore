@@ -6,3 +6,6 @@ __pycache__/
 # Ignore Django migrations
 */migrations/
 .env
+
+# Ignore staticfiles
+/staticfiles/

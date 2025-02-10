@@ -1,0 +1,521 @@
+
+//     const canHaveBlobs = "{{ can_have_blobs }}";
+
+//     document.getElementById('viewModal').addEventListener('hidden.bs.modal', function () {
+//         // Reset the tabs and tab content back to the original structure
+//         const possibleBlobNatures = JSON.parse('{{ possible_blob_natures | dict_to_json | safe }}');
+
+//         // Reset the tabs
+//         let tabsContent = `
+//         <li class="nav-item">
+//             <a class="nav-link active" id="details-tab" data-bs-toggle="tab" href="#details-content">Details</a>
+//         </li>`;
+
+//         possibleBlobNatures.forEach(nature => {
+//             tabsContent += `
+//         <li class="nav-item">
+//             <a class="nav-link" id="${nature}-tab" data-bs-toggle="tab" href="#${nature}-content">${nature.charAt(0).toUpperCase() + nature.slice(1)}</a>
+//         </li>`;
+//         });
+
+//         document.querySelector('#viewModalTabs').innerHTML = tabsContent;
+
+//         // Reset the tab content
+//         let tabContents = `
+//         <div id="details-content" class="tab-pane fade show active">
+//             <!-- Details content populated dynamically -->
+//         </div>`;
+
+//         possibleBlobNatures.forEach(nature => {
+//             tabContents += `
+//         <div id="${nature}-content" class="tab-pane fade">
+//             <div class="blob-container" id="${nature}-blobs">
+//                 <!-- Blobs will be loaded here dynamically -->
+//             </div>
+//         </div>`;
+//         });
+
+//         document.querySelector('.tab-content').innerHTML = tabContents;
+//     });
+//     function filterTable() {
+//         const input = document.getElementById('tableSearch');
+//         const filter = input.value.toLowerCase();
+//         const table = document.getElementById('dataTable');
+//         const rows = table.getElementsByTagName('tr');
+
+//         for (let i = 1; i < rows.length; i++) {
+//             let visible = false;
+//             const cells = rows[i].getElementsByTagName('td');
+
+//             for (let cell of cells) {
+//                 if (cell.textContent.toLowerCase().indexOf(filter) > -1) {
+//                     visible = true;
+//                     break;
+//                 }
+//             }
+//             rows[i].style.display = visible ? '' : 'none';
+//         }
+//     }
+
+//     let sortDirection = 1;
+//     let lastSortedColumn = -1;
+
+//     function sortTable(columnIndex) {
+//         const table = document.getElementById('dataTable');
+//         const rows = Array.from(table.rows).slice(1);
+//         const headers = table.getElementsByTagName('th');
+
+//         if (lastSortedColumn === columnIndex) {
+//             sortDirection *= -1;
+//         } else {
+//             sortDirection = 1;
+//             lastSortedColumn = columnIndex;
+//         }
+
+//         rows.sort((a, b) => {
+//             const aValue = a.cells[columnIndex].textContent;
+//             const bValue = b.cells[columnIndex].textContent;
+
+//             // Check if the values are numbers
+//             const aNum = parseFloat(aValue);
+//             const bNum = parseFloat(bValue);
+
+//             if (!isNaN(aNum) && !isNaN(bNum)) {
+//                 return sortDirection * (aNum - bNum);
+//             }
+
+//             return sortDirection * aValue.localeCompare(bValue);
+//         });
+
+//         // Update table body
+//         const tbody = table.getElementsByTagName('tbody')[0];
+//         rows.forEach(row => tbody.appendChild(row));
+//     }
+
+//     // Api urls that will be used with AJAX requests to delete and update the data, for view no need. because data is returned by the current app view functions
+
+
+
+//     let itemToDelete = null;
+
+//     function confirmDelete(item) {
+//         data = JSON.parse(item);
+//         itemToDelete = data['id'];
+//         const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+//         modal.show();
+//     }
+//     let column_types = JSON.parse('{{ column_types|dict_to_json|safe }}');
+//     console.log('column_types: ', column_types);
+
+
+//     function viewDetails(item) {
+//         const data = JSON.parse(item);
+//         const detailsContent = document.querySelector('#viewModal #details-content');
+//         let content = '';
+
+//         // Populate details
+//         for (const key in data) {
+//             content += `<p><strong>${key}:</strong> ${data[key]}</p>`;
+//         }
+//         detailsContent.innerHTML = content;
+
+//         // Fetch blobs when a tab is clicked
+//         if ( canHaveBlobs === 'True') {
+           
+       
+//         const blobTabs = document.querySelectorAll('#viewModalTabs .nav-link');
+//         blobTabs.forEach(tab => {
+//             tab.addEventListener('shown.bs.tab', (event) => {
+//                 const tabId = event.target.getAttribute('href').replace('#', ''); // Get the tab ID
+//                 if (tabId !== 'details-content') {
+//                     const nature = tabId.replace('-content', ''); // Extract the nature (e.g., "photos")
+//                     console.log('nature : ', nature);
+//                     fetchBlobs(data.id, nature);
+//                 }
+//             });
+//         });
+//     }
+
+//         // Show the modal
+//         const modal = new bootstrap.Modal(document.getElementById('viewModal'));
+//         modal.show();
+//     }
+  
+   
+
+
+//     function fetchBlobs(itemId, nature) {
+        
+//         console.log("nature is : ", nature);
+//         if (getBlobsUrl != null) {
+//             const url = getBlobsUrl.replace('0', itemId).replace('blob_nature', nature);
+//         console.log('url : ', url);
+//         const blobContainer = document.querySelector(`#${nature}-blobs`);
+
+//         blobContainer.innerHTML = '<p>Loading...</p>';
+
+//         fetch(url)
+//             .then(response => response.blob()) // Fetch the ZIP file as a Blob
+//             .then(blob => {
+//                 // Extract and display images from the ZIP file
+//                 extractImagesFromZip(blob, blobContainer);
+//             })
+//             .catch(error => {
+//                 console.error('Error fetching blobs:', error);
+//                 blobContainer.innerHTML = '<p>Failed to load blobs.</p>';
+//             });
+//         }
+       
+//     }
+
+//     function extractImagesFromZip(zipBlob, container) {
+//         const zip = new JSZip();
+//         zip.loadAsync(zipBlob)
+//             .then(zip => {
+//                 container.innerHTML = ''; // Clear the container
+//                 Object.keys(zip.files).forEach(fileName => {
+//                     if (!zip.files[fileName].dir) { // Skip directories
+//                         zip.files[fileName].async('blob').then(fileBlob => {
+//                             const imgUrl = URL.createObjectURL(fileBlob);
+//                             const imgElement = document.createElement('img');
+//                             imgElement.src = imgUrl;
+//                             imgElement.classList.add('img-thumbnail', 'm-2');
+//                             imgElement.style.maxWidth = '100px';
+//                             imgElement.style.cursor = 'pointer';
+//                             imgElement.onclick = () => openImagePreview(imgUrl);
+//                             container.appendChild(imgElement);
+//                         });
+//                     }
+//                 });
+//             })
+//             .catch(error => {
+//                 console.error('Error extracting ZIP:', error);
+//                 container.innerHTML = '<p>Failed to extract blobs.</p>';
+//             });
+//     }
+
+//     function openImagePreview(imageUrl) {
+//         const previewModal = document.createElement('div');
+//         previewModal.classList.add('modal', 'fade');
+//         previewModal.innerHTML = `
+//         <div class="modal-dialog modal-lg">
+//             <div class="modal-content">
+//                 <div class="modal-body text-center">
+//                     <img src="${imageUrl}" class="img-fluid" alt="Preview">
+//                 </div>
+//                 <div class="modal-footer">
+//                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+//                 </div>
+//             </div>
+//         </div>
+//     `;
+//         document.body.appendChild(previewModal);
+//         const modal = new bootstrap.Modal(previewModal);
+//         modal.show();
+//     }
+
+//     function editDetails(item) {
+//         const data = JSON.parse(item);
+//         let content = ''; // This will hold the HTML content.
+//         for (const key in data) {
+//             if (key === 'id') {
+//                 content += `
+//         <div class="mb-3 d-flex align-items-center">
+//             <input class="form-control w-50" id="edit:${key}" value="${data[key]}" type="${column_types[key]}" hidden disabled>
+//         </div>
+//     `;
+//             } else if (!(key.indexOf('updated_at') !== -1 || key.indexOf('created_at') !== -1)) {
+//                 content += `
+//         <div class="mb-3 d-flex align-items-center">
+//             <label for="edit:${key}" class="form-label me-2 w-25 text-start">${key}</label>
+//             <input class="form-control w-50" id="edit:${key}" value="${data[key]}" type="${column_types[key]}">
+//         </div>
+//     `;
+//             }
+//         }
+
+
+//         document.querySelector('#editModal .modal-body #editForm').innerHTML = content;
+//         document.querySelector('#editModal .modal-footer').innerHTML = `
+//         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+//         <button type="button" class="btn btn-primary" onclick="saveEdit('${data['id']}')">Save</button>
+//     `;
+//         const modal = new bootstrap.Modal(document.getElementById('editModal'));
+//         modal.show();
+//     }
+
+//     function saveEdit(id) {
+//         const updatedData = {}; // This will hold the updated form data.
+//         const form = document.querySelector('#editModal .modal-body');
+//         const inputs = form.querySelectorAll('input');
+
+//         inputs.forEach(input => {
+//             const key = input.id.split(':')[1];
+
+//             if (input.type === 'file' && input.files.length > 0) {
+//                 const file = input.files[0];
+//                 const reader = new FileReader();
+
+//                 reader.onload = function (e) {
+//                     updatedData[key] = e.target.result;
+//                     console.log(`Encoded image for key ${key}:`, updatedData[key]);
+
+//                     if (Object.keys(updatedData).length === inputs.length) {
+//                         sendAjaxRequest(id, updatedData);
+//                     }
+//                 };
+
+//                 reader.readAsDataURL(file);
+//             } else {
+//                 updatedData[key] = input.value;
+//             }
+//         });
+
+//         // Proceed if there are no files to encode
+//         if (!Array.from(inputs).some(input => input.type === 'file')) {
+//             sendEditAjaxRequest(id, updatedData);
+//         }
+//     }
+
+//     function sendEditAjaxRequest(id, updatedData) {
+//         if (!id || id !== updatedData['id']) {
+//             console.error('Invalid ID or ID mismatch.');
+//             return;
+//         }
+
+//         console.log(updatedData); // Log the updated data.
+
+//         // Construct the AJAX call to save the changes
+//         const url = `{% url edit_url 0 %}`.replace(0, id);
+//         console.log(url);
+
+//         $.ajax({
+//             url: url,
+//             type: 'PUT',
+//             contentType: 'application/json', // Ensure the data is sent as JSON
+//             data: JSON.stringify(updatedData),
+//             success: function (response) {
+//                 alert('Changes saved successfully.');
+//                 location.reload(); // Reload the page or update the UI as needed
+//             },
+//             error: function (xhr) {
+//                 console.error('Failed to update item:', xhr.responseText || xhr);
+//                 alert('Failed to save changes. Please try again.');
+//             }
+//         });
+//     }
+
+
+
+//     function deleteItem() {
+//         itemId = itemToDelete;
+//         const url = `{% url delete_url 0 %}`.replace(0, itemId);
+
+//         $.ajax({
+//             url: url,
+//             type: 'DELETE',
+
+//             success: function (response) {
+//                 location.reload();
+//             },
+//             error: function (xhr) {
+
+//             }
+//         });
+//     }
+//     function openAddModal(columns) {
+//     const canHaveBlobs = "{{ can_have_blobs }}" === 'True';
+//     const possibleBlobNatures = JSON.parse('{{ possible_blob_natures | dict_to_json | safe }}');
+//     const data = JSON.parse(columns);
+
+//     // Fetch dropdown data from the template context
+//     const dropdownData = JSON.parse('{{ dropdown_data | dict_to_json | safe }}');
+//     const toshow = JSON.parse('{{ toshow | dict_to_json | safe }}');
+//     console.log('toshow:', toshow);
+
+//     // Generate details content
+//     let detailsContent = '';
+//     for (const key in data) {
+//         if (data[key] === 'id' || data[key].indexOf('updated_at') !== -1 || data[key].indexOf('created_at') !== -1) {
+//             continue;
+//         }
+//         if (column_types[data[key]] === 'dropdown-search' || column_types[data[key]] === 'dropdown-simple') {
+//             // Create a searchable dropdown for dropdown-search fields
+//             let options = '';
+//             if (column_types[data[key]] === 'dropdown-search') {
+//             // Check if dropdown data exists for this field
+//             if (dropdownData[data[key]]) {
+//                 dropdownData[data[key]].forEach(item => {     
+//                         const valueField = toshow[data[key]][0]; 
+//                         const displayField = toshow[data[key]][1]; 
+//                         options += `<option value="${item[valueField]}">${item[displayField]}</option>`;
+                   
+                    
+//                 });
+//             }} else {
+//                 if (dropdownData[data[key]]) {
+//                 dropdownData[data[key]].forEach(item => {     
+//                         options += `<option value="${item}">${item}</option>`;
+                   
+                    
+//                 });
+//             }
+//             }
+
+//             detailsContent += `
+//                 <div class="mb-3 d-flex align-items-center">
+//                     <label for="add:${data[key]}" class="form-label me-2 w-25 text-start">${data[key]}</label>
+//                     <select class="form-control w-50 select2" id="add:${data[key]}">
+//                         ${options}
+//                     </select>
+//                 </div>
+//             `;
+//         } else {
+//             detailsContent += `
+//                 <div class="mb-3 d-flex align-items-center">
+//                     <label for="add:${data[key]}" class="form-label me-2 w-25 text-start">${data[key]}</label>
+//                     <input type="${column_types[data[key]]}" class="form-control w-50" id="add:${data[key]}" value="">
+//                 </div>
+//             `;
+//         }
+//     }
+
+//     // Create form content with Bootstrap tabs
+//     const modalContent = `
+//         <nav>
+//             <div class="nav nav-tabs" id="nav-tab" role="tablist">
+//                 <button class="nav-link active" id="nav-details-tab" data-bs-toggle="tab" data-bs-target="#nav-details" type="button" role="tab">
+//                     Details
+//                 </button>
+//                 ${canHaveBlobs ? possibleBlobNatures.map(type => `
+//                     <button class="nav-link" id="nav-${type}-tab" data-bs-toggle="tab" data-bs-target="#nav-${type}" type="button" role="tab">
+//                         ${type.charAt(0).toUpperCase() + type.slice(1)}
+//                     </button>
+//                 `).join('') : ''}
+//             </div>
+//         </nav>
+//         <div class="tab-content" id="nav-tabContent">
+//             <div class="tab-pane fade show active" id="nav-details" role="tabpanel" tabindex="0">
+//                 ${detailsContent}
+//             </div>
+//             ${canHaveBlobs ? possibleBlobNatures.map(type => `
+//                 <div class="tab-pane fade" id="nav-${type}" role="tabpanel" tabindex="0">
+//                     <div id="blob-${type}-inputs" class="mt-3">
+//                         <div class="mb-3 d-flex align-items-center">
+//                             <input type="file" class="form-control w-75" name="${type}[]" id="blob:${type}" />
+//                             <button type="button" class="btn btn-sm btn-primary ms-2" onclick="addFileInput('${type}')">+</button>
+//                         </div>
+//                     </div>
+//                 </div>
+//             `).join('') : ''}
+//         </div>
+//     `;
+
+//     // Update modal content
+//     document.querySelector('#addModal .modal-body #addForm').innerHTML = modalContent;
+
+//     // Initialize Select2 for searchable dropdowns
+//     $('.select2').select2({
+//         placeholder: 'Select an option',
+//         allowClear: true,
+//         width: '100%',
+//         dropdownParent: $('#addModal') // Attach dropdown to the modal
+//     });
+
+//     // Update modal footer
+//     document.querySelector('#addModal .modal-footer').innerHTML = `
+//         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+//         <button type="button" class="btn btn-primary" onclick="saveNewElement()">Save</button>
+//     `;
+
+//     const modal = new bootstrap.Modal(document.getElementById('addModal'));
+//     modal.show();
+// }
+
+
+//     function addFileInput(tabId) {
+//         const container = document.getElementById(`blob-${tabId}-inputs`);
+//         const newInput = document.createElement("div");
+//         newInput.classList.add("mb-3", "d-flex", "align-items-center");
+//         newInput.innerHTML = `
+//         <input type="file" class="form-control w-75" name="${tabId}[]" id="${tabId}" />
+//         <button type="button" class="btn btn-sm btn-danger ms-2" onclick="this.parentElement.remove()">-</button>
+//     `;
+//         container.appendChild(newInput);
+//     }
+
+
+
+//     function saveNewElement() {
+//     const form = document.querySelector('#addModal .modal-body');
+//     const inputs = form.querySelectorAll('input, select'); // Include both input and select elements
+//     const formData = new FormData();
+//     const formBlobData = new FormData();
+
+//     inputs.forEach(input => {
+//         const key = input.id.split(':')[1]; // Extract the key from the element's ID
+
+//         if (input.type === 'file') {
+//             // Handle file inputs
+//             Array.from(input.files).forEach((file, index) => {
+//                 formBlobData.append(`${key}`, file);
+//                 console.log(`Appended file ${index} for key ${key}:`, file);
+//             });
+//         } else if (input.tagName === 'SELECT') {
+//             // Handle select elements (dropdowns)
+//             const selectedValue = input.value; // Get the selected value
+//             formData.append(key, selectedValue); // Append the selected value to formData
+//             console.log(`Appended selected value for key ${key}:`, selectedValue);
+//         } else {
+//             // Handle other input types (text, number, etc.)
+//             formData.append(key, input.value);
+//         }
+//     });
+
+//     console.log('formData:', formData);
+//     console.log('formBlobData:', formBlobData);
+
+//     sendAjaxRequest(formData, formBlobData); // Send the form data
+// }
+
+//     function sendAjaxRequest(formData, formBlobData) {
+//         const url = `{% url add_url %}`;
+
+//         $.ajax({
+//             url: url,
+//             type: 'POST',
+//             data: formData,
+//             contentType: false, // Important for binary data
+//             processData: false, // Important for binary data
+//             success: function (response) {
+//                 console.log('Response:', response.id);
+//                 if (canHaveBlobs === "True"){
+//                     const blob_url = addBlobUrl.replace(0, response.id);
+//                 $.ajax({
+//                     url: blob_url,
+//                     type: 'POST',
+//                     data: formBlobData,
+//                     contentType: false, // Important for binary data
+//                     processData: false, // Important for binary data
+//                     success: function (response) {
+//                         location.reload();
+//                     },
+//                     error: function (xhr) {
+//                         console.error('Failed to create blobs:', xhr.responseText || xhr);
+//                         alert('Failed to save blobs, but item is created. ');
+//                     }
+//                 });
+//                 }else {
+//                     location.reload();
+//                 }
+              
+
+
+
+//             },
+//             error: function (xhr) {
+//                 console.error('Failed to create item:', xhr.responseText || xhr);
+//                 alert('Failed to save item. Please try again.');
+//             }
+//         });
+//     } 

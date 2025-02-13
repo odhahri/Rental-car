@@ -5,6 +5,8 @@ from cars.serializers.car_update_serializer import CarUpdateSerializer
 from cars.serializers.car_view_serializer import CarSerializer
 from common.models import CBlob
 from common.shared.serializers.user_blob_serializer import CarBlobSerializer, CarCreateBlobSerializer
+from reservation.models import Reservation
+from reservation.serializers.reservation_view_serializer import ReservationSerializer
 class CarService():
     def create(self, request):
         serializer = CarCreateInputSerializer(data=request.data)
@@ -64,4 +66,17 @@ class CarService():
         serializer = CarBlobSerializer(carblob, many=True)
         return serializer.data
     
-    
+
+    def list_car_with_availability(self,pk):
+        # list cars with corresponding availability. 
+        print('pk is ',pk)
+        # car = Car.objects.get(car_id=pk)
+        reservations = Reservation.objects.filter(car = pk, status = 'APPROVED')
+        if reservations.exists():
+            serializer =  ReservationSerializer(reservations, many=True)
+            return serializer.data
+        else :
+            return 'No current reservations found for this car'
+
+
+        

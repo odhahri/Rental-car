@@ -217,7 +217,6 @@
             top: 50%;
             transform: translateY(-50%);
             font-size: 0.875rem;
-            opacity: 0.5;
         }
     
         /* Action Buttons */
@@ -313,12 +312,16 @@
             background: transparent;
             border: none;
         }
+        .img-footer{
+            border: none!important;
+        }
     
         .modal-lg .modal-body img {
             max-height: 80vh;
             width: auto;
             margin: 0 auto;
         }
+         
     
         /* Responsive Design */
         @media (max-width: 768px) {

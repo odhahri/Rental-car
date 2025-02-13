@@ -2,6 +2,7 @@
 {% block title %}{{ car.name }} Details{% endblock %}
 
 {% block styles %}
+{% load custom_filters %}
 <style>
     /* Page Container */
     .car-details-container {
@@ -177,11 +178,17 @@
             <div class="carousel-inner">
                 {% for image in car.images %}
                 <div class="carousel-item {% if forloop.first %}active{% endif %}">
-                    <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                        class="d-block w-100" alt="{{ car.car_name }}" onclick="openZoomModal(this.src)">
+                    <img src="{{ image }}" class="d-block w-100" alt="{{ car.car_name }}" onclick="openZoomModal(this.src)">
+                </div>
+                {% empty %}
+                <!-- Default image if no images are available -->
+                <div class="carousel-item active">
+                    <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500" 
+                        class="d-block w-100" alt="{{ car.car_name }}">
                 </div>
                 {% endfor %}
             </div>
+            
             <button class="carousel-control-prev" type="button" data-bs-target="#carImageCarousel" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
@@ -196,33 +203,33 @@
     <!-- Car Information -->
     <div class="car-info-section">
         <h1 class="car-title">{{ car.car_name }}</h1>
-        <p class="car-subtitle">{{ car.model_name }} | {{ car.year }}</p>
+        <p class="car-subtitle">{{ car.car_brand_name }} | {{ car.car_color }}</p>
 
         <!-- Availability Badge -->
-        <div class="availability-badge {% if car.is_available %}available{% else %}unavailable{% endif %}">
-            {% if car.is_available %}
+        <div class="availability-badge {% if car %}available{% else %}unavailable{% endif %}">
+            {% if car %}
             Available for Reservation
             {% else %}
-            Currently Unavailable
+            Check Availability
             {% endif %}
         </div>
 
         <!-- Car Description -->
-        <p class="car-description">{{ car.car_color }}</p>
 
         <!-- Car Attributes -->
         <div class="attributes-grid">
-            <div class="attribute-item">
-                <div class="attribute-label">Make</div>
-                <div class="attribute-value">{{ car.car_name }}</div>
-            </div>
+            
             <div class="attribute-item">
                 <div class="attribute-label">Model</div>
-                <div class="attribute-value">{{ car.model_name }}</div>
+                <div class="attribute-value">{{ car.car_model_name }}</div>
             </div>
             <div class="attribute-item">
                 <div class="attribute-label">Year</div>
-                <div class="attribute-value">{{ car.manufacture_year }}</div>
+                <div class="attribute-value">{{ car.car_manufacture_year }}</div>
+            </div>
+            <div class="attribute-item">
+                <div class="attribute-label">Rental Price</div>
+                <div class="attribute-value">{{ car.car_rental_price }}</div>
             </div>
             <!-- Add more attributes as needed -->
         </div>
@@ -235,6 +242,12 @@
             {% endif %}
         </div>
     </div>
+     <!-- Reservation Calendar -->
+     <div class="car-info-section">
+        <h2 class="car-title">Reservation Calendar</h2>
+        <div id="reservation-calendar"></div>
+    </div>
+</div>
 </div>
 
 <!-- Zoom Modal -->
@@ -243,6 +256,26 @@
 </div>
 
 <script>
+
+    document.addEventListener("DOMContentLoaded", function() {
+        var reservations = JSON.parse('{{ reservations| dict_to_json | safe }}');
+        console.log(reservations);
+        var calendarEl = document.getElementById("reservation-calendar");
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: "dayGridMonth",
+            events: reservations.map(reservation => ({
+                title: "Reserved",
+                start: reservation.reservation_start_date,
+                end: reservation.reservation_end_date,
+                color: "#ff4d4d"
+            }))
+        });
+
+        calendar.render();
+    });
+
+
+    
     function openZoomModal(imgSrc) {
         const modal = document.getElementById('imageZoomModal');
         const zoomedImg = document.getElementById('zoomedImage');

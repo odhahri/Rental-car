@@ -115,8 +115,9 @@
         {% for car in cars %}
         <div class="col-md-6 col-lg-4 car-card">
             <div class="card">
-                <img src="https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
-                    alt="{{ car.name }}" class="card-img-top">
+                <img src="{% if car.image_url %}{{ car.image_url }}{% else %}https://images.pexels.com/photos/210019/pexels-photo-210019.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500{% endif %}" 
+                alt="{{ car.car_name }}" 
+                class="card-img-top">
                 <div class="card-body">
                     <h5 class="card-title">{{ car.car_name }}</h5>
                     <p class="card-text">{{ car.model_name }}</p>

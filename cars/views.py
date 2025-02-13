@@ -1,3 +1,4 @@
+import base64
 from io import BytesIO
 import zipfile
 from django.http import HttpResponse
@@ -5,6 +6,8 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from cars.services.car_service import CarService
 from django.shortcuts import render
+import base64
+
 
 # rest framework django view 
 
@@ -47,15 +50,44 @@ class CarViewSet(GenericViewSet):
         car = self.car_service.get_by_name(name)
         return Response(data=car, status=200)
     
+    def list_car_with_availability(self, request, pk):
+        print('pk is ',pk)
+        cars = self.car_service.list_car_with_availability(pk)
+        return Response(data=cars, status=200)
+    
 
      # HTML-based Views
+
     def car_list_page(self, request):
         cars = self.car_service.list()
+        
+        for car in cars:
+            print (car['id'])
+            blobs = self.car_service.get_blobs_by_id(car['id'], "image")  # Fetch blobs for each car
+            if blobs:
+                blob_data = blobs[0]['blob']  # Get the first blob (binary)
+                encoded_image = base64.b64encode(blob_data).decode('utf-8')  # Convert to Base64 string
+                car['image_url'] = f"data:image/webp;base64,{encoded_image}"  # Embed in HTML-friendly format
+            else:
+                car['image_url']= None  # Fallback if no image is available
+
         return render(request, 'cars/car_list.html', {'cars': cars})
 
+
     def car_detail_page(self, request, pk):
-        car = self.car_service.get(pk)
-        return render(request, 'cars/car_detail.html', {'car': car})
+        car = self.car_service.get(pk)  # Fetch car details
+        blobs = self.car_service.get_blobs_by_id(pk, "image")  # Fetch images
+
+        images = []
+        for blob in blobs:
+            encoded_image = base64.b64encode(blob['blob']).decode('utf-8')
+            images.append(f"data:image/webp;base64,{encoded_image}")
+
+        car['images'] = images  # Attach images to car object
+        reservations = self.car_service.list_car_with_availability(pk)
+        print('reservations are ',reservations)
+
+        return render(request, 'cars/car_detail.html', {'car': car,'reservations': reservations})
 
     def add_blobs_by_id(self, request, pk):
         blobs = self.car_service.add_blobs_by_id(request, pk)

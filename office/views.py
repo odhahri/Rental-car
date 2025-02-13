@@ -93,6 +93,7 @@ class OfficeViewSet(GenericViewSet):
             'reservation_car_key': ['id', 'car_name'], 
             'reservation_processed_by': ['id', 'user_name'],
         }
+        hover_dropdown_fields_url = [{'reservation_car_key':'cars:list_car_availability'}]
         context = {
             'table_title': 'Reservation Management',
             'columns': columns,  
@@ -108,7 +109,9 @@ class OfficeViewSet(GenericViewSet):
             'delete_url' : 'reservations:delete_reservation', 
             'column_types': column_types,
             'dropdown_data': dropdown_data,
-            'toshow' : toshow  
+            'toshow' : toshow  ,
+            'hover_dropdown_fields_url': hover_dropdown_fields_url,
+            'car_availability_url':'cars:list_car_with_availability',
         }
         return render(request, 'reservations.html', context)
     

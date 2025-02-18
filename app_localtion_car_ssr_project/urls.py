@@ -24,5 +24,4 @@ urlpatterns = [
     path('client/', include('client.urls')),
     path('reservation/', include('reservation.urls')),
     path('identification/', include('user_identification.urls')),
-    path('office/', include('office.urls')),
 ]

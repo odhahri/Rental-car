@@ -33,7 +33,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'office.apps.OfficeConfig',
     'common.apps.CommonConfig',
     'cars.apps.CarsConfig',
     'reservation.apps.ReservationConfig',
@@ -64,15 +63,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'office/templates'),  # Add this if templates are specific to the app
-            os.path.join(BASE_DIR, 'cars/templates'),
-            os.path.join(BASE_DIR, 'user_identification/templates'),
-            # os.path.join(BASE_DIR, 'reservation/templates'),
-            # os.path.join(BASE_DIR, 'client/templates'),
-            # os.path.join(BASE_DIR, 'agent/templates'),
             
-            # Add this if templates are specific to the app
-            os.path.join(BASE_DIR, 'templates')  # Add a common templates directory
             ],
         'APP_DIRS': True,
         'OPTIONS': {

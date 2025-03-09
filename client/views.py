@@ -4,13 +4,13 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from client.services.client_service import ClientService
+from common.shared.keycloak.constants import keycloak_scopes_resources
 
 # rest framework django view 
 
 from .models import Client
 
 class ClientViewSet(GenericViewSet):
-
     queryset = Client.objects.all()
     client_service = ClientService()
 

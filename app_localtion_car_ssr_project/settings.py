@@ -137,3 +137,22 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+MIDDLEWARE.append("common.shared.keycloak.middlewares.keycloakMiddleware.keycloakMiddleware")
+
+
+KEYCLOAK_CLIENT_PUBLIC_KEY = f"""-----BEGIN PUBLIC KEY-----
+{os.environ.get("KEYCLOAK_CLIENT_PUBLIC_KEY")}
+-----END PUBLIC KEY-----"""
+KEYCLOAK_CONFIG = {
+    "KEYCLOAK_REALM": os.environ.get("KEYCLOAK_REALM"),
+    "KEYCLOAK_CLIENT_ID": os.environ.get("KEYCLOAK_CLIENT_ID"),
+    "KEYCLOAK_DEFAULT_ACCESS": "DENY",  # DENY or ALLOW
+    "KEYCLOAK_METHOD_VALIDATE_TOKEN": "DECODE",
+    "KEYCLOAK_SERVER_URL": os.environ.get("KEYCLOAK_SERVER_URL"),
+    "KEYCLOAK_CLIENT_SECRET_KEY": os.environ.get("KEYCLOAK_CLIENT_SECRET_KEY"),
+    "KEYCLOAK_CLIENT_PUBLIC_KEY": KEYCLOAK_CLIENT_PUBLIC_KEY,
+    "KEYCLOACK_ADMIN_USERNAME" : os.environ.get("KEYCLOACK_ADMIN_USERNAME"),
+    "KEYCLOAK_ADMIN_PASSWORD" : os.environ.get("KEYCLOAK_ADMIN_PASSWORD")
+}

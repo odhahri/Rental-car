@@ -16,8 +16,8 @@ class UserIdentificationViewSet(GenericViewSet):
         try:
             data = self.identification_service.signin(request)
             return ResponseWrapper(data=data, message="User signed in successfully.", success=True, status=200)
-        except IdentificationException as e:
-            return ResponseWrapper(message=str(e), success=False, status=500)
+        except Exception as e:
+            return ResponseWrapper(message=str(e), success=False, status=500, data=None)
     
     def signup(self, request):
         try:

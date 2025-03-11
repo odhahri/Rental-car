@@ -198,7 +198,9 @@ class KeycloakHandler:
         except Exception as e:
             raise Exception(f"Error retrieving realm role (Function:get_realm_role): {e}")
 
-    def get_user_token(self, username: str, password: str):
+    def get_user_token(self, usercredentaials: dict):
+        username = usercredentaials.get('username')
+        password = usercredentaials.get('password')
         try:
             keycloak_client = self.get_keycloak_client()
             if keycloak_client:

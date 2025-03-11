@@ -2,11 +2,15 @@ from rest_framework.viewsets import GenericViewSet
 from rest_framework.response import Response
 
 from cars.models import Car
+from common.shared.keycloak.constants import keycloak_scopes_resources
 from common.shared.wrappers.rWrapper import ResponseWrapper
 from .services.car_service import CarService
 from cars.exceptions.exception_handler import CarServiceException
 
 class CarViewSet(GenericViewSet):
+    
+    keycloak_resources_scopes = keycloak_scopes_resources.keycloak_scopes_resources['car']
+
     queryset = Car.objects.all()
     car_service = CarService()
 

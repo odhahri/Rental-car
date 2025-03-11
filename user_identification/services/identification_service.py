@@ -9,8 +9,13 @@ class IdentificatioService:
         user_signin_serializer = KekUserLoginSerializer(data=request.data)
         user_signin_serializer.is_valid(raise_exception=True)
         user_credentials = user_signin_serializer.validated_data
-        signin_res = self.keycloak_handler.get_user_token(user_credentials)
-        return signin_res
+        try :
+            signin_res = self.keycloak_handler.get_user_token(user_credentials)
+            return signin_res
+        except Exception as e:
+            raise e
+
+        
 
     def signout(self, request):
         refresh_token = request.data.get('refresh_token')

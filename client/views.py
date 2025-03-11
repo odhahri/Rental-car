@@ -11,6 +11,8 @@ from common.shared.keycloak.constants import keycloak_scopes_resources
 from .models import Client
 
 class ClientViewSet(GenericViewSet):
+    keycloak_resources_scopes = keycloak_scopes_resources.keycloak_scopes_resources['client']
+
     queryset = Client.objects.all()
     client_service = ClientService()
 

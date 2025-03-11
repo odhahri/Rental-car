@@ -4,9 +4,11 @@ from django.http import HttpResponse
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 from agent.services.agent_service import AgentService
+from common.shared.keycloak.constants import keycloak_scopes_resources
 from .models import Agent
 
 class AgentViewSet(GenericViewSet):
+    keycloak_resources_scopes = keycloak_scopes_resources.keycloak_scopes_resources['agent']
 
     queryset = Agent.objects.all()
     agent_service = AgentService()

@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
+from common.shared.keycloak.constants import keycloak_scopes_resources
 from reservation.services.reservation_service import ReservationService
 
 # rest framework django view 
@@ -7,6 +8,7 @@ from reservation.services.reservation_service import ReservationService
 from .models import Reservation
 
 class ReservationViewSet(GenericViewSet):
+    keycloak_resources_scopes = keycloak_scopes_resources.keycloak_scopes_resources['reservation']
 
     queryset = Reservation.objects.all()
     reservation_service = ReservationService()

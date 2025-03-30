@@ -1,8 +1,9 @@
 
+import threading
 from common.shared.keycloak.helpers.KeycloakHandler import KeycloakHandler
 from common.shared.serializers.user_kek_serializer import KekUserLoginSerializer, KekUserRegisterSerializer
 
-class IdentificatioService:
+class IdentificationService:
     keycloak_handler = KeycloakHandler()
 
     def signin(self, request):
@@ -22,11 +23,19 @@ class IdentificatioService:
         self.keycloak_handler.logout_user(refresh_token)
         return None
 
-    def register_user(self, request):
+    def signup(self, request):
         serializer = KekUserRegisterSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         user_data = serializer.validated_data
         user_roles = user_data.pop("roles", None)
-        user = self.keycloak_handler.create_user_and_assign_roles(user_data, user_roles)
-        return user
-
+        try:
+            # Create the user in Keycloak
+            user_id = self.keycloak_handler.create_user_and_assign_roles(user_data, user_roles)
+            
+            # Send password reset email
+            email_thread = threading.Thread(target=self.keycloak_handler.send_password_reset_mail, args=(user_id,))
+            email_thread.start()
+            
+            return user_id
+        except Exception as e:
+            raise e

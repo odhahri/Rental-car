@@ -11,6 +11,7 @@ class FilterByPassPermissions:
         if kwargs == {}:
             routes = {
                 '/identification/signin/': 'POST',
+                '/identification/signup/': 'POST',
             }
             return routes.get(request.path) == request.method and not 'HTTP_AUTHORIZATION' in request.META
 

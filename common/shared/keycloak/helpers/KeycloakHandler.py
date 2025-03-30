@@ -251,3 +251,25 @@ class KeycloakHandler:
             raise KeycloakError(f"KeycloakError (Function:logout_user): {e}")
         except Exception as e:
             raise Exception(f"Error logging out user (Function:logout_user): {e}")
+        
+    def send_password_reset_mail(self, user_id: str):
+        try:
+            keycloak_admin = self.get_keycloak_admin()
+            if keycloak_admin:
+                # Define the payload with the required action
+                payload = ["UPDATE_PASSWORD"]  # Action to update password
+                
+                # Send the update account email
+                response = keycloak_admin.send_update_account(
+                    user_id=user_id,
+                    payload=payload,
+                    client_id=self._client_id,  # Optional: Specify the client ID
+                    lifespan=3600,  # Optional: Set the link expiration time (e.g., 1 hour)
+                )
+                return response
+        except KeycloakPostError as e:
+            raise KeycloakPostError(f"Error sending password reset email (Function:send_password_reset_mail): {e.response_code} - {e.response_body}")
+        except KeycloakError as e:
+            raise KeycloakError(f"KeycloakError (Function:send_password_reset_mail): {e}")
+        except Exception as e:
+            raise Exception(f"Error sending password reset email (Function:send_password_reset_mail): {e}")

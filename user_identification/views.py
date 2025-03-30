@@ -1,7 +1,7 @@
 from rest_framework.viewsets import GenericViewSet
 from common.shared.wrappers.rWrapper import ResponseWrapper
 from user_identification.exceptions.exception_handler import IdentificationException
-from user_identification.services.identification_service import IdentificatioService
+from user_identification.services.identification_service import IdentificationService
 
 # rest framework django view 
 
@@ -9,7 +9,7 @@ from user_identification.services.identification_service import IdentificatioSer
 
 class UserIdentificationViewSet(GenericViewSet):
 
-    identification_service=IdentificatioService()
+    identification_service=IdentificationService()
 
 
     def signin(self, request):
@@ -23,8 +23,8 @@ class UserIdentificationViewSet(GenericViewSet):
         try:
             data = self.identification_service.signup(request)
             return ResponseWrapper(data=data, message="User registered successfully.", success=True, status=201)
-        except IdentificationException as e:
-            return ResponseWrapper(message=str(e), success=False, status=500)
+        except Exception as e:
+            return ResponseWrapper(message=str(e), success=False, status=500, data=None)
     
     def logout(self, request):
         try:

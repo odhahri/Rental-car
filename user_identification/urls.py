@@ -6,5 +6,5 @@ urlpatterns = [
     path('signup/', UserIdentificationViewSet.as_view({'post': 'signup'})),
     path('logout/', UserIdentificationViewSet.as_view({'get': 'logout'})),
     path('register/', UserIdentificationViewSet.as_view({'post': 'register_user'})),
-    
+    path('connected-user/',UserIdentificationViewSet.as_view({'post':'connected_user'})),
 ]

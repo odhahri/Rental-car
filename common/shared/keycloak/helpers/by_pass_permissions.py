@@ -12,6 +12,7 @@ class FilterByPassPermissions:
             routes = {
                 '/identification/signin/': 'POST',
                 '/identification/signup/': 'POST',
+                '/identification/connected-user/':'POST'
             }
             return routes.get(request.path) == request.method and not 'HTTP_AUTHORIZATION' in request.META
 

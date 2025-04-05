@@ -38,3 +38,10 @@ class UserIdentificationViewSet(GenericViewSet):
             return ResponseWrapper(data=data, message="User registered successfully.", success=True, status=201)
         except IdentificationException as e:
             return ResponseWrapper(message=str(e), success=False, status=500)
+        
+    def connected_user(self, request):
+        try:
+            data = self.identification_service.connected_user(request)
+            return ResponseWrapper(data= data, message= "Connected user retreived successfuly.", success=True, status= 200)
+        except IdentificationException as e:
+            return ResponseWrapper(message= str(e),success=False,status=500)

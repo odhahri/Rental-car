@@ -119,9 +119,13 @@ class KeycloakHandler:
     def get_user_info(self, token: str):
         try:
             keycloak_client = self.get_keycloak_client()
-            if keycloak_client:
+            keycloak_admin = self.get_keycloak_admin()
+            if keycloak_client and keycloak_admin:
                 user_info = keycloak_client.userinfo(token)
-                return user_info
+                user_id = keycloak_admin.get_user_id(user_info['preferred_username'])
+                user_roles = keycloak_admin.get_client_roles_of_user(user_id = user_id,client_id=keycloak_admin.get_client_id(self._client_id))
+                
+                return {"user_id" : user_id,"user_infos": user_info,"user_assigned_roles":user_roles}
         except KeycloakGetError as e:
             raise KeycloakGetError(f"Error retrieving user info (Function:get_user_info): {e.response_code} - {e.response_body}")
         except KeycloakError as e:

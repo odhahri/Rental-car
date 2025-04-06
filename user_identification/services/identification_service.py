@@ -42,7 +42,10 @@ class IdentificationService:
 
     def connected_user(self,request):
         try:
-            user_info = self.keycloak_handler.get_user_info(request.data['access_token'])
-            return user_info
+            # parse the token from the request header
+            auth_header = request.META.get('HTTP_AUTHORIZATION').split()
+            token = auth_header[1] if len(auth_header) == 2 else auth_header[0]
+            related_user_data = self.keycloak_handler.get_user_info(token)
+            return related_user_data
         except Exception as e:
             raise e

@@ -43,8 +43,6 @@ class IdentificationService:
     def connected_user(self,request):
         try:
             user_info = self.keycloak_handler.get_user_info(request.data['access_token'])
-            # userid =  user_info['sub']
-            # user_roles = self.keycloak_handler.get_roles_of_user(userid)  
             return user_info
         except Exception as e:
             raise e
